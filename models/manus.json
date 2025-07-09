@@ -1,0 +1,32 @@
+{
+  "credits": 15,
+  "outputs": ["slides", "pdf", "web"],
+  "credit_cost": {
+    "slide": 1.5,
+    "pdf_page": 1.0,
+    "web_component": 2.0
+  },
+  "limits": {
+    "max_slides": 20,
+    "max_pdf_pages": 50,
+    "max_web_components": 10,
+    "min_credits": 3
+  },
+  "capabilities": [
+    "presentation_design",
+    "document_formatting",
+    "web_development",
+    "content_optimization"
+  ],
+  "description": "Manus AI specializes in creating professional presentations, documents, and web interfaces with advanced design capabilities.",
+  "api_endpoint": "https://api.manus.ai/v1",
+  "rate_limits": {
+    "requests_per_minute": 60,
+    "requests_per_hour": 1000
+  },
+  "supported_formats": {
+    "slides": ["pptx", "pdf", "html"],
+    "pdf": ["pdf", "docx"],
+    "web": ["html", "css", "js", "react"]
+  }
+}

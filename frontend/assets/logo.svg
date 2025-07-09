@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200" height="60" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
+  <!-- Brain Icon -->
+  <g transform="translate(10, 10)">
+    <!-- Brain outline -->
+    <path d="M20 8 C25 5, 35 5, 40 8 C42 10, 42 15, 40 18 C42 20, 42 25, 40 28 C35 32, 25 32, 20 28 C18 25, 18 20, 20 18 C18 15, 18 10, 20 8 Z" 
+          fill="#6B7280" stroke="#374151" stroke-width="2"/>
+    
+    <!-- Brain details -->
+    <path d="M22 12 C24 10, 26 10, 28 12 M32 12 C34 10, 36 10, 38 12 M25 18 C27 16, 29 16, 31 18 M23 24 C25 22, 27 22, 29 24 M33 24 C35 22, 37 22, 39 24" 
+          stroke="#374151" stroke-width="1" fill="none"/>
+    
+    <!-- Neural connections -->
+    <g stroke="#6B7280" stroke-width="1.5" fill="none">
+      <line x1="42" y1="15" x2="48" y2="12"/>
+      <line x1="42" y1="20" x2="48" y2="20"/>
+      <line x1="42" y1="25" x2="48" y2="28"/>
+      <circle cx="48" cy="12" r="2" fill="#6B7280"/>
+      <circle cx="48" cy="20" r="2" fill="#6B7280"/>
+      <circle cx="48" cy="28" r="2" fill="#6B7280"/>
+    </g>
+  </g>
+  
+  <!-- Text -->
+  <text x="70" y="25" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#374151">
+    greybrain.ai
+  </text>
+  <text x="70" y="45" font-family="Arial, sans-serif" font-size="12" fill="#6B7280">
+    AI Model Aggregation Platform
+  </text>
+</svg>

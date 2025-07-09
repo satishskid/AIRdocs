@@ -1,0 +1,3549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GreyBrain Bank - AI Model Aggregation Platform</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #ffffff;
+            min-height: 100vh;
+            color: #1f2937;
+            line-height: 1.6;
+        }
+
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .main-wrapper {
+            flex: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* History Sidebar */
+        .history-sidebar {
+            width: 320px;
+            background: #f8fafc;
+            border-right: 1px solid #e5e7eb;
+            padding: 24px;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .history-sidebar.collapsed {
+            transform: translateX(-100%);
+            width: 0;
+            padding: 0;
+        }
+
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .sidebar-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .sidebar-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            color: #6b7280;
+            transition: background-color 0.2s ease;
+        }
+
+        .sidebar-toggle:hover {
+            background: #e5e7eb;
+        }
+
+        .history-search {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .history-search input {
+            width: 100%;
+            padding: 8px 12px 8px 36px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
+            background: white;
+        }
+
+        .history-search input:focus {
+            outline: none;
+            border-color: #f59e0b;
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6b7280;
+        }
+
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .history-item {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .history-item:hover {
+            border-color: #f59e0b;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .history-item-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .history-item-title {
+            font-weight: 500;
+            color: #1f2937;
+            font-size: 14px;
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .history-item-time {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .history-item-type {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .history-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .history-action-btn {
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            color: #374151;
+            transition: all 0.2s ease;
+        }
+
+        .history-action-btn:hover {
+            background: #f59e0b;
+            color: white;
+            border-color: #f59e0b;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 24px 0;
+            margin-bottom: 32px;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: #f59e0b;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .how-it-works-btn {
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #374151;
+            transition: all 0.2s ease;
+        }
+
+        .how-it-works-btn:hover {
+            background: #f59e0b;
+            color: white;
+            border-color: #f59e0b;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 0 0 48px 0;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            text-align: center;
+            margin-bottom: 64px;
+        }
+
+        .hero-section h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 16px;
+            line-height: 1.2;
+        }
+
+        .hero-section p {
+            font-size: 1.25rem;
+            color: #6b7280;
+            margin-bottom: 48px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+
+        .value-props {
+            display: flex;
+            justify-content: center;
+            gap: 48px;
+            margin: 48px 0;
+            flex-wrap: wrap;
+        }
+
+        .value-prop {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-align: left;
+        }
+
+        .value-icon {
+            font-size: 32px;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fef3c7;
+            border-radius: 12px;
+            flex-shrink: 0;
+        }
+
+        .value-text {
+            line-height: 1.4;
+        }
+
+        .value-text strong {
+            color: #1f2937;
+            font-size: 16px;
+            display: block;
+        }
+
+        .value-text span {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        /* Stats Section */
+        .stats-section {
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 32px;
+            margin: 48px 0;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 32px;
+            text-align: center;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #f59e0b;
+            margin-bottom: 8px;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #6b7280;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Testimonial Section */
+        .testimonial-section {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            border-radius: 20px;
+            padding: 48px 32px;
+            margin: 64px 0;
+            color: white;
+            text-align: center;
+        }
+
+        .testimonial-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .testimonial-quote {
+            font-size: 1.5rem;
+            font-weight: 500;
+            line-height: 1.6;
+            margin-bottom: 32px;
+            font-style: italic;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .author-info {
+            text-align: left;
+        }
+
+        .author-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .author-title {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .company-logo {
+            font-size: 32px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 12px;
+            border-radius: 12px;
+        }
+
+        /* Search Container */
+        .search-container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .search-bar {
+            position: relative;
+            margin-bottom: 32px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .search-bar:hover {
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        .search-bar:focus-within {
+            box-shadow: 0 8px 30px rgba(245, 158, 11, 0.2);
+        }
+
+        .search-input {
+            width: 100%;
+            min-height: 120px;
+            max-height: 300px;
+            padding: 20px 60px 20px 24px;
+            border: 2px solid #e5e7eb;
+            border-radius: 16px;
+            font-size: 16px;
+            line-height: 1.6;
+            resize: vertical;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #f59e0b;
+            box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .search-input::placeholder {
+            color: #9ca3af;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .search-btn {
+            position: absolute;
+            right: 16px;
+            top: 20px;
+            background: #f59e0b;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(245, 158, 11, 0.2);
+        }
+
+        .search-btn:hover {
+            background: #d97706;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(245, 158, 11, 0.3);
+        }
+
+        /* Model Cards in Sidebar */
+        .model-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .model-card:hover {
+            border-color: #3b82f6;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+        }
+
+        .model-name {
+            font-weight: 600;
+            color: #1a202c;
+            margin-bottom: 8px;
+            font-size: 0.875rem;
+        }
+
+        .model-credits {
+            font-size: 1rem;
+            color: #3b82f6;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .model-outputs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        .output-tag {
+            background: #e0e7ff;
+            color: #3730a3;
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Quality Toggle */
+        .quality-toggle {
+            text-align: center;
+        }
+
+        .toggle-label {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .quality-slider {
+            flex: 1;
+            max-width: 200px;
+        }
+
+        /* File Upload Section */
+        .file-upload-section {
+            background: #f8fafc;
+            border: 1px dashed #d1d5db;
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            opacity: 0.8;
+        }
+
+        .file-upload-section:hover {
+            opacity: 1;
+        }
+
+        .file-upload-section.dragover {
+            border-color: #f59e0b;
+            background: #fef3c7;
+            opacity: 1;
+        }
+
+        .file-upload-icon {
+            width: 32px;
+            height: 32px;
+            margin: 0 auto 8px;
+            color: #6b7280;
+        }
+
+        .file-upload-text {
+            font-size: 14px;
+            color: #374151;
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+
+        .file-upload-subtext {
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 12px;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-upload-btn {
+            background: #f59e0b;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .file-upload-btn:hover {
+            background: #d97706;
+        }
+
+        .uploaded-files {
+            margin-top: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .uploaded-file {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 12px;
+        }
+
+        .file-icon {
+            width: 24px;
+            height: 24px;
+            color: #6b7280;
+        }
+
+        .file-info {
+            flex: 1;
+        }
+
+        .file-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #1f2937;
+        }
+
+        .file-size {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .file-remove {
+            background: none;
+            border: none;
+            color: #ef4444;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: background-color 0.2s ease;
+        }
+
+        .file-remove:hover {
+            background: #fef2f2;
+        }
+
+        /* Categories Section */
+        .categories-section {
+            margin-bottom: 64px;
+        }
+
+        .categories-section h2 {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #1f2937;
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .category-card {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .category-card:hover {
+            border-color: #f59e0b;
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .category-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 16px;
+            color: #f59e0b;
+        }
+
+        .category-card h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+
+        .category-card p {
+            color: #6b7280;
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+
+        .category-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.875rem;
+        }
+
+        .success-rate {
+            color: #10b981;
+            font-weight: 600;
+        }
+
+        .avg-time {
+            color: #f59e0b;
+            font-weight: 600;
+        }
+
+        /* Template Section */
+        .template-section {
+            margin-bottom: 64px;
+        }
+
+        .template-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .back-btn {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #374151;
+            transition: all 0.2s ease;
+        }
+
+        .back-btn:hover {
+            background: #e2e8f0;
+        }
+
+        .templates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 24px;
+        }
+
+        .template-card {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .template-card:hover {
+            border-color: #2563eb;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .template-preview {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            font-style: italic;
+        }
+
+        /* Generation Workflow */
+        .generation-section {
+            margin-bottom: 64px;
+        }
+
+        .generation-workflow {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .workflow-step {
+            display: none;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 32px;
+        }
+
+        .workflow-step.active {
+            display: block;
+        }
+
+        .workflow-step h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1a202c;
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 32px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 12px;
+            font-weight: 600;
+            color: #374151;
+            font-size: 16px;
+        }
+
+        /* Enhanced styling for primary form groups */
+        .form-group:has(#documentContext) {
+            background: #fefefe;
+            border: 1px solid #f3f4f6;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group:has(#documentContext):focus-within {
+            background: #ffffff;
+            border-color: #f59e0b;
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+        }
+
+        .form-group:has(#documentContext) label {
+            color: #1f2937;
+            font-size: 17px;
+            margin-bottom: 16px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group textarea {
+            width: 100%;
+            min-height: 150px;
+            max-height: 300px;
+            padding: 16px 20px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 16px;
+            line-height: 1.6;
+            resize: vertical;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #f59e0b;
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+        }
+
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #f59e0b;
+            box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .form-group textarea::placeholder {
+            color: #9ca3af;
+            line-height: 1.6;
+        }
+
+        /* Enhanced styling for primary context textarea */
+        #documentContext {
+            background: #fefefe;
+            border-width: 2px;
+            font-size: 16px;
+            min-height: 180px;
+        }
+
+        #documentContext:focus {
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.15);
+        }
+
+        .preview-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .confidence-score,
+        .estimated-time {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .confidence-value {
+            color: #059669;
+            font-weight: 600;
+        }
+
+        .time-value {
+            color: #7c3aed;
+            font-weight: 600;
+        }
+
+        .format-options {
+            margin-top: 16px;
+        }
+
+        .format-checkboxes {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .format-checkboxes label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: normal;
+        }
+
+        /* Daily Stats */
+        .daily-stats {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            padding: 20px;
+            color: white;
+            margin-bottom: 24px;
+        }
+
+        .daily-stats h3 {
+            font-size: 1rem;
+            margin-bottom: 12px;
+            opacity: 0.9;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            opacity: 0.8;
+        }
+
+        /* Prompt Input Section */
+        .prompt-container {
+            background: white;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .prompt-section {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .prompt-textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 20px;
+            border: 2px solid #f1f5f9;
+            border-radius: 12px;
+            font-size: 1rem;
+            line-height: 1.6;
+            resize: vertical;
+            transition: all 0.2s ease;
+            background: #fafbfc;
+        }
+
+        .prompt-textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .prompt-textarea::placeholder {
+            color: #94a3b8;
+        }
+
+        .suggestions-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .suggestion-item {
+            padding: 16px 20px;
+            cursor: pointer;
+            border-bottom: 1px solid #f1f5f9;
+            transition: background-color 0.2s ease;
+        }
+
+        .suggestion-item:hover {
+            background-color: #f8fafc;
+        }
+
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
+
+        .suggestion-name {
+            font-weight: 600;
+            color: #1a202c;
+            margin-bottom: 4px;
+        }
+
+        .suggestion-models {
+            font-size: 0.875rem;
+            color: #64748b;
+        }
+
+        .controls-row {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .output-type-select {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #f1f5f9;
+            border-radius: 10px;
+            font-size: 0.875rem;
+            background: white;
+            transition: border-color 0.2s ease;
+        }
+
+        .output-type-select:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        .btn {
+            background: #f59e0b;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            background: #d97706;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+        }
+
+        .btn-primary {
+            background: #f59e0b;
+            flex: 1;
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            flex: 1;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+
+        .btn-admin {
+            background: #6b7280;
+            padding: 8px 16px;
+            font-size: 0.75rem;
+        }
+
+        .btn-admin:hover {
+            background: #4b5563;
+        }
+
+        .btn-large {
+            padding: 16px 32px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .btn-icon {
+            font-size: 20px;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #64748b;
+            padding: 8px;
+            border-radius: 4px;
+            transition: background-color 0.2s ease;
+        }
+
+        .close-btn:hover {
+            background: #f1f5f9;
+        }
+
+        /* How It Works Section */
+        .how-it-works-section {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .how-it-works-content {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .how-it-works-header {
+            margin-bottom: 32px;
+            position: relative;
+        }
+
+        .how-it-works-header h2 {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #1a202c;
+            text-align: center;
+        }
+
+        .tech-section {
+            margin-bottom: 32px;
+        }
+
+        .tech-section h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1a202c;
+            margin-bottom: 16px;
+        }
+
+        .tech-section p {
+            color: #64748b;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        .models-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .credit-info ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .credit-info li {
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
+            color: #64748b;
+        }
+
+        .credit-info li:last-child {
+            border-bottom: none;
+        }
+
+        /* Generation Results */
+        .generation-results {
+            text-align: center;
+        }
+
+        .loading-state,
+        .success-state,
+        .error-state {
+            padding: 32px;
+            border-radius: 12px;
+            background: white;
+            border: 2px solid #e2e8f0;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #e2e8f0;
+            border-top: 4px solid #2563eb;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .content-preview {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px 0;
+            text-align: left;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .download-options {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin: 24px 0;
+            flex-wrap: wrap;
+        }
+
+        .action-buttons {
+            margin-top: 24px;
+        }
+
+        .cloud-storage-options {
+            margin: 24px 0;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .cloud-storage-options h4 {
+            margin-bottom: 12px;
+            color: #1f2937;
+            font-size: 16px;
+        }
+
+        .cloud-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .cloud-buttons .btn {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        /* Generation Metadata */
+        .generation-metadata {
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .metadata-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+        }
+
+        .metadata-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+        }
+
+        .metadata-label {
+            font-weight: 500;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .metadata-value {
+            font-weight: 600;
+            color: #1f2937;
+            font-size: 14px;
+        }
+
+        .progress-info {
+            margin-top: 16px;
+            padding: 12px;
+            background: #fef3c7;
+            border-radius: 6px;
+            border: 1px solid #f59e0b;
+        }
+
+        .progress-info p {
+            margin: 4px 0;
+            font-size: 14px;
+            color: #92400e;
+        }
+
+        /* Professional Footer */
+        .professional-footer {
+            background: #1f2937;
+            color: white;
+            margin-top: 80px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 24px 40px;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+            gap: 40px;
+        }
+
+        .footer-section h3 {
+            color: #f59e0b;
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .footer-section h4 {
+            color: white;
+            font-size: 16px;
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+
+        .footer-section p {
+            color: #9ca3af;
+            line-height: 1.6;
+        }
+
+        .footer-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 8px;
+        }
+
+        .footer-section ul li a {
+            color: #d1d5db;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.2s ease;
+        }
+
+        .footer-section ul li a:hover {
+            color: #f59e0b;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #374151;
+            padding: 24px 0;
+        }
+
+        .footer-bottom-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .footer-bottom p {
+            color: #9ca3af;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .footer-social {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 14px;
+        }
+
+        .footer-social span {
+            color: #9ca3af;
+        }
+
+        .footer-social a {
+            color: #d1d5db;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .footer-social a:hover {
+            color: #f59e0b;
+        }
+
+        /* Responsive Design Updates */
+        @media (max-width: 768px) {
+            .hero-section h1 {
+                font-size: 2rem;
+            }
+
+            .search-input {
+                min-height: 100px;
+                padding: 16px 50px 16px 20px;
+                font-size: 15px;
+            }
+
+            .search-btn {
+                right: 12px;
+                top: 16px;
+                padding: 10px;
+            }
+
+            #documentContext {
+                min-height: 120px;
+                padding: 14px 16px;
+                font-size: 15px;
+            }
+
+            .file-upload-section {
+                padding: 12px;
+                margin: 16px 0;
+            }
+
+            .file-upload-icon {
+                width: 24px;
+                height: 24px;
+            }
+
+            .categories-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .templates-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .download-options {
+                flex-direction: column;
+            }
+
+            .how-it-works-content {
+                margin: 12px;
+                padding: 24px;
+            }
+
+            .history-sidebar {
+                width: 280px;
+            }
+
+            .value-props {
+                flex-direction: column;
+                gap: 24px;
+                align-items: center;
+            }
+
+            .stats-container {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 24px;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+            }
+
+            .testimonial-section {
+                padding: 32px 20px;
+                margin: 48px 0;
+            }
+
+            .testimonial-quote {
+                font-size: 1.25rem;
+            }
+
+            .testimonial-author {
+                flex-direction: column;
+                gap: 16px;
+                text-align: center;
+            }
+
+            .author-info {
+                text-align: center;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 32px;
+                text-align: center;
+            }
+
+            .footer-bottom-content {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        /* Results Section */
+        .results-container {
+            background: white;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .results-header h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1a202c;
+        }
+
+        .refined-content {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+            font-size: 0.875rem;
+            line-height: 1.6;
+            color: #374151;
+            white-space: pre-wrap;
+        }
+
+        /* Admin Panel */
+        .admin-panel {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100vh;
+            background: white;
+            border-left: 1px solid #e2e8f0;
+            padding: 24px;
+            overflow-y: auto;
+            transition: right 0.3s ease;
+            z-index: 1000;
+            box-shadow: -4px 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .admin-panel.open {
+            right: 0;
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .admin-header h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1a202c;
+        }
+
+        .close-admin {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #64748b;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.875rem;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #f1f5f9;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+            font-family: 'SF Mono', Monaco, monospace;
+        }
+
+        .loading {
+            text-align: center;
+            color: #64748b;
+            font-style: italic;
+            padding: 20px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 240px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .app-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #e2e8f0;
+            }
+
+            .main-content {
+                padding: 24px 16px;
+            }
+
+            .admin-panel {
+                width: 100%;
+                right: -100%;
+            }
+        }
+
+        .admin-tabs {
+            display: flex;
+            margin-bottom: 20px;
+        }
+
+        .admin-tab {
+            flex: 1;
+            padding: 12px;
+            background: #f7fafc;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .admin-tab.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 8px;
+            margin: 10px 0;
+            display: none;
+        }
+
+        .alert-success {
+            background: #c6f6d5;
+            color: #22543d;
+            border: 1px solid #9ae6b4;
+        }
+
+        .alert-error {
+            background: #fed7d7;
+            color: #742a2a;
+            border: 1px solid #fc8181;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            color: #667eea;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .models-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- History Sidebar -->
+        <div class="history-sidebar" id="historySidebar">
+            <div class="sidebar-header">
+                <h2 class="sidebar-title">Recent Documents</h2>
+                <button class="sidebar-toggle" onclick="toggleSidebar()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="history-search">
+                <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.35-4.35"></path>
+                </svg>
+                <input type="text" placeholder="Search history..." id="historySearch">
+            </div>
+
+            <div class="history-list" id="historyList">
+                <!-- History items will be populated here -->
+            </div>
+        </div>
+
+        <!-- Main Wrapper -->
+        <div class="main-wrapper">
+            <!-- Header -->
+            <div class="header">
+                <div class="header-content">
+                    <div class="logo">
+                        <button class="sidebar-toggle" onclick="toggleSidebar()" style="margin-right: 12px; background: none; border: none; color: #f59e0b;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="3" y1="6" x2="21" y2="6"></line>
+                                <line x1="3" y1="12" x2="21" y2="12"></line>
+                                <line x1="3" y1="18" x2="21" y2="18"></line>
+                            </svg>
+                        </button>
+                        <img src="assets/logo.svg" alt="GreyBrain Bank" style="height: 40px; margin-right: 10px;">
+                        GreyBrain Bank
+                    </div>
+                    <div class="user-info">
+                        <span id="todayCapacity">15 documents remaining today</span>
+                        <button class="how-it-works-btn" onclick="toggleHowItWorks()">How It Works</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="main-content">
+            <!-- Hero Section -->
+            <div class="hero-section">
+                <div class="hero-badge">
+                    <span>🚀 Trusted by 2,000+ businesses worldwide</span>
+                </div>
+                <h1>GreyBrain Bank: Advanced AI Model Aggregation</h1>
+                <p>Transform any business idea into professional-grade documents, presentations, and marketing materials in minutes. Powered by 88+ AI models for superior quality and enterprise-ready security. Made by GreyBrain.ai</p>
+
+                <div class="value-props">
+                    <div class="value-prop">
+                        <div class="value-icon">⚡</div>
+                        <div class="value-text">
+                            <strong>10x Faster</strong><br>
+                            <span>Minutes vs. Hours</span>
+                        </div>
+                    </div>
+                    <div class="value-prop">
+                        <div class="value-icon">🎯</div>
+                        <div class="value-text">
+                            <strong>Enterprise Quality</strong><br>
+                            <span>Professional Templates</span>
+                        </div>
+                    </div>
+                    <div class="value-prop">
+                        <div class="value-icon">🔒</div>
+                        <div class="value-text">
+                            <strong>Secure & Compliant</strong><br>
+                            <span>SOC 2 Ready</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Professional Stats -->
+                <div class="stats-section">
+                    <div class="stats-container">
+                        <div class="stat-item">
+                            <div class="stat-number">2,000+</div>
+                            <div class="stat-label">Businesses</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">50,000+</div>
+                            <div class="stat-label">Documents Created</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">10x</div>
+                            <div class="stat-label">Faster Creation</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">99.9%</div>
+                            <div class="stat-label">Uptime</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Central Search Bar -->
+                <div class="search-container">
+                    <div class="search-bar">
+                        <textarea
+                            id="contentSearch"
+                            placeholder="Describe what you want to create in detail... You can paste full paragraphs, requirements, or examples here.
+
+Examples:
+• Create a quarterly sales report analyzing Q3 performance with revenue trends, customer acquisition metrics, and recommendations for Q4
+• Draft a marketing email campaign for our new product launch targeting small business owners, emphasizing cost savings and efficiency
+• Develop a project proposal for implementing a new CRM system, including timeline, budget, and team requirements"
+                            class="search-input"
+                            rows="4"
+                        ></textarea>
+                        <button class="search-btn" onclick="searchContent()">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <path d="m21 21-4.35-4.35"></path>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Speed vs Quality Toggle -->
+                    <div class="quality-toggle">
+                        <label class="toggle-label">
+                            <span>Fast Results (2-3 min)</span>
+                            <input type="range" id="qualitySlider" min="1" max="3" value="2" class="quality-slider">
+                            <span>High Quality (5-10 min)</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Testimonial Section -->
+            <div class="testimonial-section">
+                <div class="testimonial-content">
+                    <div class="testimonial-quote">
+                        "GreyBrain Bank transformed our content creation process. What used to take our team 8 hours now takes 20 minutes. The quality is consistently professional and our clients love the results."
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-info">
+                            <div class="author-name">Sarah Chen</div>
+                            <div class="author-title">VP of Marketing, TechFlow Solutions</div>
+                        </div>
+                        <div class="company-logo">🏢</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Categories -->
+            <div class="categories-section">
+                <h2>Business Content Categories</h2>
+                <p style="text-align: center; color: #6b7280; margin-bottom: 32px;">Select from our professionally designed templates optimized for business success</p>
+                <div class="categories-grid">
+                    <div class="category-card" onclick="selectCategory('reports')">
+                        <svg class="category-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 3v18h18"></path>
+                            <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"></path>
+                        </svg>
+                        <h3>Reports & Analysis</h3>
+                        <p>Financial reports, market research, competitive analysis, performance reviews</p>
+                        <div class="category-stats">
+                            <span class="success-rate">94% success rate</span>
+                            <span class="avg-time">~6 minutes</span>
+                        </div>
+                    </div>
+
+                    <div class="category-card" onclick="selectCategory('marketing')">
+                        <svg class="category-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                            <path d="M2 17l10 5 10-5"></path>
+                            <path d="M2 12l10 5 10-5"></path>
+                        </svg>
+                        <h3>Marketing Materials</h3>
+                        <p>Email campaigns, social media content, blog posts, press releases</p>
+                        <div class="category-stats">
+                            <span class="success-rate">91% success rate</span>
+                            <span class="avg-time">~4 minutes</span>
+                        </div>
+                    </div>
+
+                    <div class="category-card" onclick="selectCategory('presentations')">
+                        <svg class="category-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                            <line x1="8" y1="21" x2="16" y2="21"></line>
+                            <line x1="12" y1="17" x2="12" y2="21"></line>
+                        </svg>
+                        <h3>Presentations</h3>
+                        <p>Sales pitches, project updates, training materials, board presentations</p>
+                        <div class="category-stats">
+                            <span class="success-rate">89% success rate</span>
+                            <span class="avg-time">~7 minutes</span>
+                        </div>
+                    </div>
+
+                    <div class="category-card" onclick="selectCategory('communications')">
+                        <svg class="category-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                        <h3>Communications</h3>
+                        <p>Memos, announcements, proposals, meeting summaries</p>
+                        <div class="category-stats">
+                            <span class="success-rate">96% success rate</span>
+                            <span class="avg-time">~3 minutes</span>
+                        </div>
+                    </div>
+
+                    <div class="category-card" onclick="selectCategory('documentation')">
+                        <svg class="category-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14,2 14,8 20,8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10,9 9,9 8,9"></polyline>
+                        </svg>
+                        <h3>Documentation</h3>
+                        <p>Procedures, policies, user guides, training manuals</p>
+                        <div class="category-stats">
+                            <span class="success-rate">92% success rate</span>
+                            <span class="avg-time">~8 minutes</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Template Preview Section -->
+            <div id="templateSection" class="template-section" style="display: none;">
+                <div class="template-header">
+                    <button class="back-btn" onclick="goBackToCategories()">← Back to Categories</button>
+                    <h2 id="templateCategoryTitle">Reports & Analysis Templates</h2>
+                </div>
+
+                <div id="templatesGrid" class="templates-grid">
+                    <!-- Templates will be populated dynamically -->
+                </div>
+            </div>
+
+            <!-- Generation Workflow Section -->
+            <div id="generationSection" class="generation-section" style="display: none;">
+                <div class="generation-header">
+                    <button class="back-btn" onclick="goBackToTemplates()">← Back to Templates</button>
+                    <h2 id="generationTitle">Create Your Document</h2>
+                </div>
+
+                <div class="generation-workflow">
+                    <div class="workflow-step active" id="step1">
+                        <h3>Step 1: Customize Your Content</h3>
+                        <div class="form-group">
+                            <label for="documentTitle">Document Title</label>
+                            <input type="text" id="documentTitle" placeholder="Enter your document title">
+                        </div>
+                        <div class="form-group">
+                            <label for="documentContext">Additional Context</label>
+                            <textarea id="documentContext" placeholder="Provide detailed context, specific requirements, data points, target audience, tone preferences, or any other relevant information...
+
+Examples:
+• Target audience: C-level executives in manufacturing companies
+• Tone: Professional but approachable, data-driven
+• Key metrics to include: Revenue growth, customer satisfaction scores, market share
+• Specific requirements: Must include executive summary, visual charts, and actionable recommendations
+• Brand guidelines: Use company colors, include logo, follow corporate style guide"></textarea>
+                        </div>
+
+                        <!-- File Upload Section -->
+                        <div class="file-upload-section" id="fileUploadSection">
+                            <svg class="file-upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14,2 14,8 20,8"></polyline>
+                                <line x1="12" y1="18" x2="12" y2="12"></line>
+                                <polyline points="9,15 12,12 15,15"></polyline>
+                            </svg>
+                            <div class="file-upload-text">Upload Reference Files</div>
+                            <div class="file-upload-subtext">Drag and drop files here, or click to browse</div>
+                            <input type="file" id="fileInput" class="file-input" multiple accept=".pdf,.doc,.docx,.txt,.csv,.xlsx">
+                            <button class="file-upload-btn" onclick="document.getElementById('fileInput').click()">
+                                Choose Files
+                            </button>
+                            <div class="uploaded-files" id="uploadedFiles"></div>
+                        </div>
+
+                        <button class="btn btn-primary" onclick="nextStep()">Continue to Preview</button>
+                    </div>
+
+                    <div class="workflow-step" id="step2">
+                        <h3>Step 2: Preview & Generate</h3>
+                        <div class="preview-card">
+                            <div class="confidence-score">
+                                <span class="confidence-label">Confidence Score:</span>
+                                <span class="confidence-value" id="confidenceScore">High (94%)</span>
+                            </div>
+                            <div class="estimated-time">
+                                <span class="time-label">Estimated Time:</span>
+                                <span class="time-value" id="estimatedTime">6 minutes</span>
+                            </div>
+                            <div class="format-options">
+                                <label>Output Formats:</label>
+                                <div class="format-checkboxes">
+                                    <label><input type="checkbox" value="pdf" checked> PDF (Print-ready)</label>
+                                    <label><input type="checkbox" value="word" checked> Word (Editable)</label>
+                                    <label><input type="checkbox" value="powerpoint"> PowerPoint</label>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary btn-large" onclick="generateContent()">
+                            <span class="btn-icon">✨</span>
+                            Generate Professional Content
+                        </button>
+                    </div>
+
+                    <div class="workflow-step" id="step3">
+                        <h3>Step 3: Your Content is Ready!</h3>
+                        <div id="generationResults" class="generation-results">
+                            <!-- Results will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- How It Works Section -->
+            <div id="howItWorksSection" class="how-it-works-section" style="display: none;">
+                <div class="how-it-works-content">
+                    <div class="how-it-works-header">
+                        <button class="close-btn" onclick="toggleHowItWorks()">×</button>
+                        <h2>How GreyBrain Bank Works</h2>
+                    </div>
+
+                    <div class="tech-section">
+                        <h3>AI Model Management</h3>
+                        <p>Our platform automatically selects the optimal AI model based on your content type and quality requirements. We use advanced models including GPT-4, Claude, and specialized document generation models.</p>
+
+                        <div id="modelsGrid" class="models-grid">
+                            <!-- Models will be loaded here -->
+                        </div>
+                    </div>
+
+                    <div class="tech-section">
+                        <h3>Credit System</h3>
+                        <div id="creditInfo" class="credit-info">
+                            <p>Your usage is managed through a transparent credit system:</p>
+                            <ul>
+                                <li>Fast Results: 1-2 credits per document</li>
+                                <li>High Quality: 3-5 credits per document</li>
+                                <li>Daily free credits: 50 credits</li>
+                                <li>Monthly subscription: Unlimited usage</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <!-- Admin Panel -->
+    <div id="adminPanel" class="admin-panel">
+        <div class="admin-header">
+            <h2>Admin Panel</h2>
+            <button class="close-admin" onclick="toggleAdmin()">&times;</button>
+        </div>
+
+        <div id="adminLogin" class="admin-login">
+            <div class="form-group">
+                <label for="adminPassword">Password:</label>
+                <input type="password" id="adminPassword" placeholder="Enter admin password">
+            </div>
+            <button id="adminLoginBtn" class="btn btn-primary">Login</button>
+        </div>
+
+        <div id="adminForms" class="admin-forms" style="display: none;">
+            <div class="sidebar-section">
+                <h3>Add New Model</h3>
+
+                <form id="addModelForm">
+                    <div class="form-group">
+                        <label for="modelName">Model Name:</label>
+                        <input type="text" id="modelName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="modelCredits">Credits:</label>
+                        <input type="number" id="modelCredits" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="modelOutputs">Output Types (comma-separated):</label>
+                        <input type="text" id="modelOutputs" placeholder="slides,pdf,web,code" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Model</button>
+                </form>
+            </div>
+
+            <div class="sidebar-section">
+                <h3>Add Prompt Suggestion</h3>
+                <form id="addSuggestionForm">
+                    <div class="form-group">
+                        <label for="suggestionName">Suggestion Name:</label>
+                        <input type="text" id="suggestionName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="suggestionPrompt">Prompt Template:</label>
+                        <textarea id="suggestionPrompt" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="suggestionModels">Recommended Models (comma-separated):</label>
+                        <input type="text" id="suggestionModels" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Suggestion</button>
+                </form>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <!-- Professional Footer -->
+    <footer class="professional-footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <div class="footer-logo">
+                    <h3>GreyBrain Bank</h3>
+                    <p>Advanced AI model aggregation platform - Made by GreyBrain.ai</p>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h4>Product</h4>
+                <ul>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#pricing">Pricing</a></li>
+                    <li><a href="#templates">Templates</a></li>
+                    <li><a href="#api">API</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="#about">About Us</a></li>
+                    <li><a href="#careers">Careers</a></li>
+                    <li><a href="#investors">Investors</a></li>
+                    <li><a href="#press">Press</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Support</h4>
+                <ul>
+                    <li><a href="#help">Help Center</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                    <li><a href="#status">Status</a></li>
+                    <li><a href="#security">Security</a></li>
+                    <li><a href="admin-dashboard.html" target="_blank">Admin Dashboard</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Legal</h4>
+                <ul>
+                    <li><a href="#privacy">Privacy Policy</a></li>
+                    <li><a href="#terms">Terms of Service</a></li>
+                    <li><a href="#compliance">Compliance</a></li>
+                    <li><a href="#gdpr">GDPR</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="footer-bottom-content">
+                <p>&copy; 2024 GreyBrain Bank. All rights reserved. Made by GreyBrain.ai | SOC 2 Compliant | 99.9% Uptime SLA</p>
+                <div class="footer-social">
+                    <span>Follow us:</span>
+                    <a href="#linkedin">LinkedIn</a>
+                    <a href="#twitter">Twitter</a>
+                    <a href="#github">GitHub</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Global variables
+        let modelsData = {};
+        let currentPassword = '';
+        let suggestionTimeout = null;
+        let dailyStats = {
+            prompts: 0,
+            credits: 0
+        };
+
+        // API base URL
+        const API_BASE = 'http://localhost:8001';
+
+        // Test function for comprehensive functionality verification
+        async function runSystemTest() {
+            console.log('🧪 Starting GreyBrain Bank System Test...');
+
+            try {
+                // Test 1: API Connectivity
+                console.log('📡 Testing API connectivity...');
+                const healthResponse = await fetch(`${API_BASE}/health`);
+                if (!healthResponse.ok) throw new Error('API health check failed');
+                console.log('✅ API connectivity: PASSED');
+
+                // Test 2: Content Categories
+                console.log('📋 Testing content categories...');
+                const categoriesResponse = await fetch(`${API_BASE}/content-categories`);
+                if (!categoriesResponse.ok) throw new Error('Categories endpoint failed');
+                const categoriesData = await categoriesResponse.json();
+                console.log(`✅ Content categories: PASSED (${categoriesData.total_categories} categories)`);
+
+                // Test 3: Content Generation
+                console.log('🎯 Testing content generation...');
+                const testRequest = {
+                    search_query: "Create a test quarterly sales report for Q3 2024",
+                    document_title: "Test Q3 2024 Sales Report",
+                    additional_context: "This is a system test",
+                    content_category: "reports",
+                    template_id: "quarterly-sales",
+                    quality_level: 2,
+                    output_formats: ["pdf"]
+                };
+
+                const generateResponse = await fetch(`${API_BASE}/generate-content`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(testRequest)
+                });
+
+                if (!generateResponse.ok) throw new Error('Content generation failed');
+                const generateData = await generateResponse.json();
+                console.log(`✅ Content generation: PASSED (${generateData.metadata.word_count} words)`);
+
+                // Test 4: Document History
+                console.log('📚 Testing document history...');
+                const historyResponse = await fetch(`${API_BASE}/document-history`);
+                if (!historyResponse.ok) throw new Error('History endpoint failed');
+                const historyData = await historyResponse.json();
+                console.log(`✅ Document history: PASSED (${historyData.total_documents} documents)`);
+
+                console.log('🎉 All tests PASSED! GreyBrain Bank system is fully operational.');
+                showNotification('System test completed successfully! All features are working.', 'success');
+
+                return true;
+
+            } catch (error) {
+                console.error('❌ System test FAILED:', error);
+                showNotification(`System test failed: ${error.message}`, 'error');
+                return false;
+            }
+        }
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            loadModels();
+            loadDailyStats();
+            setupEventListeners();
+            loadHistory();
+
+            // Run system test in development mode
+            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                setTimeout(() => {
+                    console.log('🚀 Running system test in 3 seconds...');
+                    setTimeout(runSystemTest, 3000);
+                }, 1000);
+            }
+        });
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Search functionality
+            const searchInput = document.getElementById('contentSearch');
+            searchInput.addEventListener('input', handleSearchInput);
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && e.ctrlKey) {
+                    searchContent();
+                }
+            });
+
+            // Auto-resize functionality for main search textarea
+            setupAutoResize(searchInput);
+
+            // Quality slider
+            document.getElementById('qualitySlider').addEventListener('input', updateQualityDisplay);
+
+            // File upload functionality
+            setupFileUpload();
+
+            // History search
+            document.getElementById('historySearch').addEventListener('input', filterHistory);
+
+            // Setup auto-resize for context textarea when it becomes available
+            setTimeout(() => {
+                const contextTextarea = document.getElementById('documentContext');
+                if (contextTextarea) {
+                    setupAutoResize(contextTextarea);
+                }
+            }, 100);
+
+            // Admin functionality (kept for backend management)
+            if (document.getElementById('adminLoginBtn')) {
+                document.getElementById('adminLoginBtn').addEventListener('click', adminLogin);
+                document.getElementById('addModelForm').addEventListener('submit', addModel);
+                document.getElementById('addSuggestionForm').addEventListener('submit', addSuggestion);
+            }
+        }
+
+        // Auto-resize functionality for textareas
+        function setupAutoResize(textarea) {
+            if (!textarea) return;
+
+            function autoResize() {
+                // Reset height to auto to get the correct scrollHeight
+                textarea.style.height = 'auto';
+
+                // Get the computed styles
+                const computedStyle = window.getComputedStyle(textarea);
+                const paddingTop = parseInt(computedStyle.paddingTop);
+                const paddingBottom = parseInt(computedStyle.paddingBottom);
+                const borderTop = parseInt(computedStyle.borderTopWidth);
+                const borderBottom = parseInt(computedStyle.borderBottomWidth);
+
+                // Calculate the new height
+                const contentHeight = textarea.scrollHeight - paddingTop - paddingBottom - borderTop - borderBottom;
+                const minHeight = textarea.id === 'contentSearch' ? 120 : 150;
+                const maxHeight = textarea.id === 'contentSearch' ? 300 : 400;
+
+                const newHeight = Math.max(minHeight, Math.min(maxHeight, contentHeight + paddingTop + paddingBottom));
+
+                textarea.style.height = newHeight + 'px';
+            }
+
+            // Auto-resize on input
+            textarea.addEventListener('input', autoResize);
+
+            // Auto-resize on paste
+            textarea.addEventListener('paste', function() {
+                setTimeout(autoResize, 10);
+            });
+
+            // Initial resize
+            autoResize();
+        }
+
+        // Global variables for new features
+        let uploadedFiles = [];
+        let documentHistory = JSON.parse(localStorage.getItem('documentHistory') || '[]');
+        let sidebarCollapsed = false;
+
+        // Sidebar functionality
+        function toggleSidebar() {
+            const sidebar = document.getElementById('historySidebar');
+            sidebarCollapsed = !sidebarCollapsed;
+
+            if (sidebarCollapsed) {
+                sidebar.classList.add('collapsed');
+            } else {
+                sidebar.classList.remove('collapsed');
+            }
+        }
+
+        // History management
+        async function loadHistory() {
+            const historyList = document.getElementById('historyList');
+
+            try {
+                // Try to load from backend first
+                const response = await fetch(`${API_BASE}/document-history`);
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.success && result.documents.length > 0) {
+                        // Use backend data
+                        displayHistoryItems(result.documents.map(doc => ({
+                            id: doc.id,
+                            title: doc.title,
+                            type: doc.content_type,
+                            content: doc.preview,
+                            timestamp: doc.timestamp * 1000 // Convert to milliseconds
+                        })));
+                        return;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading history from backend:', error);
+            }
+
+            // Fallback to local storage
+            displayHistoryItems(documentHistory);
+        }
+
+        function displayHistoryItems(history) {
+            const historyList = document.getElementById('historyList');
+
+            if (history.length === 0) {
+                historyList.innerHTML = `
+                    <div style="text-align: center; color: #6b7280; padding: 20px;">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" style="margin-bottom: 12px; opacity: 0.5;">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14,2 14,8 20,8"></polyline>
+                        </svg>
+                        <p>No documents yet</p>
+                        <p style="font-size: 12px;">Your created documents will appear here</p>
+                    </div>
+                `;
+                return;
+            }
+
+            historyList.innerHTML = history.map(doc => `
+                <div class="history-item" onclick="loadHistoryDocument('${doc.id}')">
+                    <div class="history-item-header">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14,2 14,8 20,8"></polyline>
+                        </svg>
+                        <span class="history-item-title">${doc.title}</span>
+                        <span class="history-item-time">${formatTime(doc.timestamp)}</span>
+                    </div>
+                    <div class="history-item-type">${doc.type}</div>
+                    <div class="history-actions">
+                        <button class="history-action-btn" onclick="event.stopPropagation(); regenerateDocument('${doc.id}')">
+                            Regenerate
+                        </button>
+                        <button class="history-action-btn" onclick="event.stopPropagation(); downloadHistoryDocument('${doc.id}')">
+                            Download
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterHistory() {
+            const query = document.getElementById('historySearch').value.toLowerCase();
+            const filteredHistory = documentHistory.filter(doc =>
+                doc.title.toLowerCase().includes(query) ||
+                doc.type.toLowerCase().includes(query)
+            );
+
+            const historyList = document.getElementById('historyList');
+            historyList.innerHTML = filteredHistory.map(doc => `
+                <div class="history-item" onclick="loadHistoryDocument('${doc.id}')">
+                    <div class="history-item-header">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14,2 14,8 20,8"></polyline>
+                        </svg>
+                        <span class="history-item-title">${doc.title}</span>
+                        <span class="history-item-time">${formatTime(doc.timestamp)}</span>
+                    </div>
+                    <div class="history-item-type">${doc.type}</div>
+                    <div class="history-actions">
+                        <button class="history-action-btn" onclick="event.stopPropagation(); regenerateDocument('${doc.id}')">
+                            Regenerate
+                        </button>
+                        <button class="history-action-btn" onclick="event.stopPropagation(); downloadHistoryDocument('${doc.id}')">
+                            Download
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function addToHistory(title, type, content) {
+            try {
+                // Save to backend
+                const formData = new FormData();
+                formData.append('title', title);
+                formData.append('content', content);
+                formData.append('content_type', type);
+                formData.append('quality_level', document.getElementById('qualitySlider')?.value || '2');
+                formData.append('output_formats', JSON.stringify(['pdf', 'word']));
+
+                const response = await fetch(`${API_BASE}/save-document`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('Document saved to backend:', result.document_id);
+                }
+            } catch (error) {
+                console.error('Error saving to backend:', error);
+            }
+
+            // Also save locally as fallback
+            const doc = {
+                id: Date.now().toString(),
+                title: title,
+                type: type,
+                content: content,
+                timestamp: Date.now()
+            };
+
+            documentHistory.unshift(doc);
+            if (documentHistory.length > 50) {
+                documentHistory = documentHistory.slice(0, 50);
+            }
+
+            localStorage.setItem('documentHistory', JSON.stringify(documentHistory));
+            loadHistory();
+        }
+
+        function formatTime(timestamp) {
+            const now = Date.now();
+            const diff = now - timestamp;
+            const minutes = Math.floor(diff / 60000);
+            const hours = Math.floor(diff / 3600000);
+            const days = Math.floor(diff / 86400000);
+
+            if (minutes < 1) return 'Just now';
+            if (minutes < 60) return `${minutes}m ago`;
+            if (hours < 24) return `${hours}h ago`;
+            return `${days}d ago`;
+        }
+
+        // Global variables for new interface
+        let currentCategory = '';
+        let currentTemplate = '';
+        let currentWorkflowStep = 1;
+        let uploadedFiles = [];
+        let documentHistory = JSON.parse(localStorage.getItem('documentHistory') || '[]');
+        let dailyCapacity = { used: 12, total: 50 };
+        let lastGeneratedContent = null;
+
+        const API_BASE = 'http://localhost:8001';
+        let templates = {
+            reports: [
+                {
+                    id: 'quarterly-sales',
+                    name: 'Quarterly Sales Report',
+                    description: 'Comprehensive quarterly sales analysis with trends and forecasts',
+                    successRate: 94,
+                    avgTime: 6,
+                    preview: 'Executive summary, sales metrics, trend analysis, recommendations'
+                },
+                {
+                    id: 'market-research',
+                    name: 'Market Research Report',
+                    description: 'In-depth market analysis with competitive landscape',
+                    successRate: 91,
+                    avgTime: 8,
+                    preview: 'Market overview, competitor analysis, opportunities, threats'
+                }
+            ],
+            marketing: [
+                {
+                    id: 'email-campaign',
+                    name: 'Email Marketing Campaign',
+                    description: 'Professional email series with compelling copy',
+                    successRate: 89,
+                    avgTime: 4,
+                    preview: 'Subject lines, email sequence, call-to-action optimization'
+                },
+                {
+                    id: 'social-media',
+                    name: 'Social Media Content',
+                    description: 'Engaging social media posts across platforms',
+                    successRate: 92,
+                    avgTime: 3,
+                    preview: 'Platform-specific posts, hashtags, engagement strategies'
+                }
+            ],
+            presentations: [
+                {
+                    id: 'sales-pitch',
+                    name: 'Sales Pitch Deck',
+                    description: 'Compelling presentation to close deals',
+                    successRate: 87,
+                    avgTime: 7,
+                    preview: 'Problem statement, solution, benefits, pricing, next steps'
+                }
+            ],
+            communications: [
+                {
+                    id: 'project-proposal',
+                    name: 'Project Proposal',
+                    description: 'Professional project proposal with timeline and budget',
+                    successRate: 95,
+                    avgTime: 5,
+                    preview: 'Project scope, deliverables, timeline, budget, team'
+                }
+            ],
+            documentation: [
+                {
+                    id: 'user-guide',
+                    name: 'User Guide',
+                    description: 'Clear step-by-step user documentation',
+                    successRate: 93,
+                    avgTime: 6,
+                    preview: 'Getting started, features, troubleshooting, FAQ'
+                }
+            ]
+        };
+
+        // File upload functionality
+        function setupFileUpload() {
+            const fileInput = document.getElementById('fileInput');
+            const uploadSection = document.getElementById('fileUploadSection');
+
+            // File input change handler
+            fileInput.addEventListener('change', handleFileSelect);
+
+            // Drag and drop handlers
+            uploadSection.addEventListener('dragover', handleDragOver);
+            uploadSection.addEventListener('dragleave', handleDragLeave);
+            uploadSection.addEventListener('drop', handleFileDrop);
+        }
+
+        function handleFileSelect(e) {
+            const files = Array.from(e.target.files);
+            processFiles(files);
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            document.getElementById('fileUploadSection').classList.add('dragover');
+        }
+
+        function handleDragLeave(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            document.getElementById('fileUploadSection').classList.remove('dragover');
+        }
+
+        function handleFileDrop(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            document.getElementById('fileUploadSection').classList.remove('dragover');
+
+            const files = Array.from(e.dataTransfer.files);
+            processFiles(files);
+        }
+
+        function processFiles(files) {
+            files.forEach(file => {
+                if (file.size > 10 * 1024 * 1024) { // 10MB limit
+                    alert(`File ${file.name} is too large. Maximum size is 10MB.`);
+                    return;
+                }
+
+                uploadedFiles.push({
+                    id: Date.now() + Math.random(),
+                    file: file,
+                    name: file.name,
+                    size: file.size,
+                    type: file.type
+                });
+            });
+
+            displayUploadedFiles();
+        }
+
+        function displayUploadedFiles() {
+            const container = document.getElementById('uploadedFiles');
+
+            if (uploadedFiles.length === 0) {
+                container.innerHTML = '';
+                return;
+            }
+
+            container.innerHTML = uploadedFiles.map(fileObj => `
+                <div class="uploaded-file">
+                    <svg class="file-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14,2 14,8 20,8"></polyline>
+                    </svg>
+                    <div class="file-info">
+                        <div class="file-name">${fileObj.name}</div>
+                        <div class="file-size">${formatFileSize(fileObj.size)}</div>
+                    </div>
+                    <button class="file-remove" onclick="removeFile('${fileObj.id}')">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="3,6 5,6 21,6"></polyline>
+                            <path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a2,2,0,0,1,2-2h4a2,2,0,0,1,2,2V6"></path>
+                        </svg>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function removeFile(fileId) {
+            uploadedFiles = uploadedFiles.filter(f => f.id !== fileId);
+            displayUploadedFiles();
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Search content functionality
+        function handleSearchInput(e) {
+            const query = e.target.value.toLowerCase();
+            if (query.length > 2) {
+                // Show relevant suggestions based on search
+                showSearchSuggestions(query);
+            }
+        }
+
+        function searchContent() {
+            const query = document.getElementById('contentSearch').value;
+            if (query.trim()) {
+                // For now, show all categories - in production this would be intelligent matching
+                document.querySelector('.categories-section').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function showSearchSuggestions(query) {
+            // Implementation for search suggestions
+            console.log('Searching for:', query);
+        }
+
+        // Category selection
+        function selectCategory(category) {
+            currentCategory = category;
+            showTemplates(category);
+        }
+
+        function showTemplates(category) {
+            // Hide categories, show templates
+            document.querySelector('.categories-section').style.display = 'none';
+            document.getElementById('templateSection').style.display = 'block';
+
+            // Update title
+            const categoryNames = {
+                reports: 'Reports & Analysis',
+                marketing: 'Marketing Materials',
+                presentations: 'Presentations',
+                communications: 'Communications',
+                documentation: 'Documentation'
+            };
+
+            document.getElementById('templateCategoryTitle').textContent = categoryNames[category] + ' Templates';
+
+            // Populate templates
+            const templatesGrid = document.getElementById('templatesGrid');
+            const categoryTemplates = templates[category] || [];
+
+            templatesGrid.innerHTML = categoryTemplates.map(template => `
+                <div class="template-card" onclick="selectTemplate('${template.id}')">
+                    <div class="template-preview">
+                        ${template.preview}
+                    </div>
+                    <h3>${template.name}</h3>
+                    <p>${template.description}</p>
+                    <div class="category-stats">
+                        <span class="success-rate">${template.successRate}% success rate</span>
+                        <span class="avg-time">~${template.avgTime} minutes</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function goBackToCategories() {
+            document.getElementById('templateSection').style.display = 'none';
+            document.querySelector('.categories-section').style.display = 'block';
+        }
+
+        // Template selection and workflow
+        function selectTemplate(templateId) {
+            currentTemplate = templateId;
+            showGenerationWorkflow();
+        }
+
+        function showGenerationWorkflow() {
+            // Hide templates, show generation workflow
+            document.getElementById('templateSection').style.display = 'none';
+            document.getElementById('generationSection').style.display = 'block';
+
+            // Reset to step 1
+            currentWorkflowStep = 1;
+            showWorkflowStep(1);
+
+            // Setup auto-resize for context textarea
+            setTimeout(() => {
+                const contextTextarea = document.getElementById('documentContext');
+                if (contextTextarea) {
+                    setupAutoResize(contextTextarea);
+                }
+            }, 100);
+        }
+
+        function goBackToTemplates() {
+            document.getElementById('generationSection').style.display = 'none';
+            document.getElementById('templateSection').style.display = 'block';
+        }
+
+        function showWorkflowStep(step) {
+            // Hide all steps
+            document.querySelectorAll('.workflow-step').forEach(s => s.classList.remove('active'));
+
+            // Show current step
+            document.getElementById(`step${step}`).classList.add('active');
+            currentWorkflowStep = step;
+        }
+
+        function nextStep() {
+            if (currentWorkflowStep < 3) {
+                showWorkflowStep(currentWorkflowStep + 1);
+
+                if (currentWorkflowStep === 2) {
+                    updatePreview();
+                }
+            }
+        }
+
+        function updatePreview() {
+            // Update confidence score and time based on quality setting
+            const quality = document.getElementById('qualitySlider').value;
+            const confidenceScores = ['Medium (85%)', 'High (94%)', 'Excellent (98%)'];
+            const estimatedTimes = ['2-3 minutes', '4-6 minutes', '8-10 minutes'];
+
+            document.getElementById('confidenceScore').textContent = confidenceScores[quality - 1];
+            document.getElementById('estimatedTime').textContent = estimatedTimes[quality - 1];
+        }
+
+        function updateQualityDisplay() {
+            const quality = document.getElementById('qualitySlider').value;
+            // Update any quality-related UI elements
+        }
+
+        // Content generation
+        async function generateContent() {
+            showWorkflowStep(3);
+
+            const title = document.getElementById('documentTitle').value || 'Untitled Document';
+            const context = document.getElementById('documentContext').value || '';
+            const quality = parseInt(document.getElementById('qualitySlider').value);
+            const searchQuery = document.getElementById('contentSearch').value || '';
+
+            // Get selected output formats
+            const formatCheckboxes = document.querySelectorAll('.format-checkboxes input[type="checkbox"]:checked');
+            const outputFormats = Array.from(formatCheckboxes).map(cb => cb.value || 'pdf');
+            if (outputFormats.length === 0) outputFormats.push('pdf');
+
+            // Show loading state
+            document.getElementById('generationResults').innerHTML = `
+                <div class="loading-state">
+                    <div class="loading-spinner"></div>
+                    <h3>Creating your professional content...</h3>
+                    <p>This may take a few minutes depending on quality settings.</p>
+                    <div class="progress-info">
+                        <p>Quality Level: ${['Fast', 'Balanced', 'High Quality'][quality - 1]}</p>
+                        <p>Estimated Time: ${['2-3 minutes', '4-6 minutes', '8-10 minutes'][quality - 1]}</p>
+                    </div>
+                </div>
+            `;
+
+            try {
+                // Prepare uploaded files data
+                const uploadedFilesData = uploadedFiles.map(file => ({
+                    name: file.name,
+                    size: file.size,
+                    type: file.type || file.file.type
+                }));
+
+                // Call the new content generation API
+                const response = await fetch(`${API_BASE}/generate-content`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        search_query: searchQuery,
+                        document_title: title,
+                        additional_context: context,
+                        content_category: currentCategory,
+                        template_id: currentTemplate,
+                        quality_level: quality,
+                        output_formats: outputFormats,
+                        uploaded_files: uploadedFilesData.length > 0 ? uploadedFilesData : null
+                    })
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    showGenerationResults(result);
+                    updateDailyCapacity();
+                } else {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || 'Generation failed');
+                }
+            } catch (error) {
+                console.error('Error generating content:', error);
+                document.getElementById('generationResults').innerHTML = `
+                    <div class="error-state">
+                        <h3>Generation Failed</h3>
+                        <p>We encountered an error while creating your content: ${error.message}</p>
+                        <button class="btn btn-primary" onclick="generateContent()">Try Again</button>
+                        <button class="btn btn-secondary" onclick="goBackToTemplates()">Go Back</button>
+                    </div>
+                `;
+            }
+        }
+
+        function showGenerationResults(result) {
+            const metadata = result.metadata || {};
+            const title = metadata.document_title || 'Untitled Document';
+            const categoryNames = {
+                reports: 'Report',
+                marketing: 'Marketing Material',
+                presentations: 'Presentation',
+                communications: 'Communication',
+                documentation: 'Documentation'
+            };
+
+            // Add to history
+            addToHistory(title, categoryNames[currentCategory] || 'Document', result.content);
+
+            document.getElementById('generationResults').innerHTML = `
+                <div class="success-state">
+                    <h3>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" style="display: inline; margin-right: 8px;">
+                            <polyline points="20,6 9,17 4,12"></polyline>
+                        </svg>
+                        Your content is ready!
+                    </h3>
+                    <div class="generation-metadata">
+                        <div class="metadata-grid">
+                            <div class="metadata-item">
+                                <span class="metadata-label">Quality Level:</span>
+                                <span class="metadata-value">${['Fast', 'Balanced', 'High Quality'][metadata.quality_level - 1] || 'Standard'}</span>
+                            </div>
+                            <div class="metadata-item">
+                                <span class="metadata-label">Model Used:</span>
+                                <span class="metadata-value">${metadata.model_used || 'AI Model'}</span>
+                            </div>
+                            <div class="metadata-item">
+                                <span class="metadata-label">Word Count:</span>
+                                <span class="metadata-value">${metadata.word_count || 'N/A'}</span>
+                            </div>
+                            <div class="metadata-item">
+                                <span class="metadata-label">Generation Time:</span>
+                                <span class="metadata-value">${metadata.estimated_time || 'N/A'} minutes</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="result-preview">
+                        <h4>Generated Content Preview:</h4>
+                        <div class="content-preview">${result.content}</div>
+                    </div>
+                    <div class="download-options">
+                        <button class="btn btn-primary" onclick="downloadContent('pdf')">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14,2 14,8 20,8"></polyline>
+                            </svg>
+                            Download PDF
+                        </button>
+                        <button class="btn btn-secondary" onclick="downloadContent('word')">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14,2 14,8 20,8"></polyline>
+                            </svg>
+                            Download Word
+                        </button>
+                        <button class="btn btn-secondary" onclick="downloadContent('powerpoint')">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                                <line x1="8" y1="21" x2="16" y2="21"></line>
+                                <line x1="12" y1="17" x2="12" y2="21"></line>
+                            </svg>
+                            Download PowerPoint
+                        </button>
+                    </div>
+                    <div class="cloud-storage-options">
+                        <h4>Save to Cloud Storage:</h4>
+                        <div class="cloud-buttons">
+                            <button class="btn btn-secondary" onclick="saveToCloud('googledrive')">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                                </svg>
+                                Google Drive
+                            </button>
+                            <button class="btn btn-secondary" onclick="saveToCloud('dropbox')">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
+                                </svg>
+                                Dropbox
+                            </button>
+                            <button class="btn btn-secondary" onclick="saveToCloud('onedrive')">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path>
+                                </svg>
+                                OneDrive
+                            </button>
+                        </div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn btn-secondary" onclick="startOver()">Create Another Document</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function downloadContent(format) {
+            const title = document.getElementById('documentTitle').value || 'document';
+            const content = document.querySelector('.content-preview').textContent;
+
+            try {
+                // Create form data for the download request
+                const formData = new FormData();
+                formData.append('content', content);
+                formData.append('title', title);
+                formData.append('format', format);
+
+                // Show loading notification
+                showNotification('Generating document...', 'info');
+
+                // Call the backend download endpoint
+                const response = await fetch(`${API_BASE}/download-document`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    // Get the filename from the response headers or generate one
+                    const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+                    const extension = format === 'powerpoint' ? 'pptx' : format === 'word' ? 'docx' : 'pdf';
+                    const filename = `${title}_${timestamp}.${extension}`;
+
+                    // Create blob and download
+                    const blob = await response.blob();
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+
+                    // Show success message
+                    showNotification(`Downloaded ${filename} successfully!`, 'success');
+                } else {
+                    throw new Error('Download failed');
+                }
+
+            } catch (error) {
+                console.error('Download error:', error);
+                showNotification(`Download failed: ${error.message}`, 'error');
+
+                // Fallback to simple text download
+                const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+                const filename = `${title}_${timestamp}.txt`;
+                const blob = new Blob([content], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                showNotification(`Downloaded as text file: ${filename}`, 'info');
+            }
+        }
+
+        function saveToCloud(provider) {
+            const title = document.getElementById('documentTitle').value || 'document';
+            const content = document.querySelector('.content-preview').textContent;
+
+            // Simulate cloud storage integration
+            switch (provider) {
+                case 'googledrive':
+                    // In a real implementation, this would use Google Drive API
+                    showNotification('Google Drive integration coming soon!', 'info');
+                    break;
+                case 'dropbox':
+                    // In a real implementation, this would use Dropbox API
+                    showNotification('Dropbox integration coming soon!', 'info');
+                    break;
+                case 'onedrive':
+                    // In a real implementation, this would use OneDrive API
+                    showNotification('OneDrive integration coming soon!', 'info');
+                    break;
+            }
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <span>${message}</span>
+                    <button onclick="this.parentElement.parentElement.remove()">×</button>
+                </div>
+            `;
+
+            // Add notification styles if not already present
+            if (!document.querySelector('#notification-styles')) {
+                const styles = document.createElement('style');
+                styles.id = 'notification-styles';
+                styles.textContent = `
+                    .notification {
+                        position: fixed;
+                        top: 20px;
+                        right: 20px;
+                        padding: 16px;
+                        border-radius: 8px;
+                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                        z-index: 1000;
+                        max-width: 400px;
+                        animation: slideIn 0.3s ease;
+                    }
+                    .notification-success { background: #10b981; color: white; }
+                    .notification-info { background: #f59e0b; color: white; }
+                    .notification-error { background: #ef4444; color: white; }
+                    .notification-content {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                    }
+                    .notification button {
+                        background: none;
+                        border: none;
+                        color: inherit;
+                        font-size: 18px;
+                        cursor: pointer;
+                        padding: 0 0 0 12px;
+                    }
+                    @keyframes slideIn {
+                        from { transform: translateX(100%); opacity: 0; }
+                        to { transform: translateX(0); opacity: 1; }
+                    }
+                `;
+                document.head.appendChild(styles);
+            }
+
+            document.body.appendChild(notification);
+
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 5000);
+        }
+
+        function startOver() {
+            // Reset to categories view
+            document.getElementById('generationSection').style.display = 'none';
+            document.querySelector('.categories-section').style.display = 'block';
+
+            // Clear form data
+            document.getElementById('documentTitle').value = '';
+            document.getElementById('documentContext').value = '';
+            document.getElementById('contentSearch').value = '';
+        }
+
+        // How It Works functionality
+        function toggleHowItWorks() {
+            const section = document.getElementById('howItWorksSection');
+            if (section.style.display === 'none') {
+                section.style.display = 'flex';
+                loadModelsInHowItWorks();
+            } else {
+                section.style.display = 'none';
+            }
+        }
+
+        function loadModelsInHowItWorks() {
+            // Load models in the How It Works section
+            loadModels();
+        }
+
+        function updateDailyCapacity() {
+            // Update the daily capacity display
+            const currentCapacity = parseInt(document.getElementById('todayCapacity').textContent.match(/\d+/)[0]);
+            const newCapacity = Math.max(0, currentCapacity - 1);
+            document.getElementById('todayCapacity').textContent = `${newCapacity} documents remaining today`;
+        }
+
+        // Load models from API
+        async function loadModels() {
+            try {
+                const response = await fetch(`${API_BASE}/models`);
+                const data = await response.json();
+                modelsData = data.models;
+                displayModels();
+            } catch (error) {
+                console.error('Error loading models:', error);
+                document.getElementById('modelsGrid').innerHTML = '<p>Error loading models. Please try again.</p>';
+            }
+        }
+
+        // Display models in grid
+        function displayModels() {
+            const grid = document.getElementById('modelsGrid');
+            
+            if (Object.keys(modelsData).length === 0) {
+                grid.innerHTML = '<p>No models available. Add some models through the admin panel.</p>';
+                return;
+            }
+            
+            grid.innerHTML = Object.entries(modelsData).map(([name, config]) => `
+                <div class="model-card">
+                    <div class="model-name">${name}</div>
+                    <div class="model-credits">💳 ${config.credits || 0} credits</div>
+                    <div class="model-outputs">
+                        ${(config.outputs || []).map(output => `<span class="output-tag">${output}</span>`).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Handle prompt input with debounced suggestions
+        function handlePromptInput(e) {
+            const query = e.target.value;
+            
+            clearTimeout(suggestionTimeout);
+            
+            if (query.length >= 5) {
+                suggestionTimeout = setTimeout(() => {
+                    getSuggestions(query);
+                }, 300);
+            } else {
+                hideSuggestions();
+            }
+        }
+
+        // Get prompt suggestions
+        async function getSuggestions(query) {
+            try {
+                const response = await fetch(`${API_BASE}/suggest-prompts`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ query })
+                });
+                
+                const data = await response.json();
+                displaySuggestions(data.suggestions);
+            } catch (error) {
+                console.error('Error getting suggestions:', error);
+            }
+        }
+
+        // Display suggestions dropdown
+        function displaySuggestions(suggestions) {
+            const dropdown = document.getElementById('suggestionsDropdown');
+            
+            if (suggestions.length === 0) {
+                hideSuggestions();
+                return;
+            }
+            
+            dropdown.innerHTML = suggestions.map(suggestion => `
+                <div class="suggestion-item" onclick="selectSuggestion('${suggestion.template.replace(/'/g, "\\'")}')">
+                    <div class="suggestion-name">${suggestion.name}</div>
+                    <div class="suggestion-models">Recommended: ${suggestion.recommended_models.join(', ')}</div>
+                </div>
+            `).join('');
+            
+            dropdown.style.display = 'block';
+        }
+
+        // Select a suggestion
+        function selectSuggestion(template) {
+            document.getElementById('promptInput').value = template;
+            hideSuggestions();
+        }
+
+        // Hide suggestions dropdown
+        function hideSuggestions() {
+            document.getElementById('suggestionsDropdown').style.display = 'none';
+        }
+
+        // Refine prompt
+        async function refinePrompt() {
+            const prompt = document.getElementById('promptInput').value.trim();
+            const outputType = document.getElementById('outputType').value;
+
+            if (!prompt) {
+                alert('Please enter a prompt first.');
+                return;
+            }
+
+            // Show loading state
+            const btn = document.getElementById('refineBtn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '⏳ Generating...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch(`${API_BASE}/refine-prompt`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ prompt, output_type: outputType })
+                });
+
+                const data = await response.json();
+                displayRefinedResult(data.refined_prompt);
+
+                // Update daily stats
+                incrementDailyStats(1, 2); // 1 prompt, estimated 2 credits
+
+            } catch (error) {
+                console.error('Error refining prompt:', error);
+                alert('Error refining prompt. Please try again.');
+            } finally {
+                // Reset button
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        // Display refined result
+        function displayRefinedResult(refinedPrompt) {
+            document.getElementById('refinedContent').textContent = refinedPrompt;
+            document.getElementById('resultsContainer').style.display = 'block';
+        }
+
+        // Download result
+        function downloadResult() {
+            const refinedContent = document.getElementById('refinedContent').textContent;
+            
+            if (!refinedContent) {
+                alert('Please refine a prompt first.');
+                return;
+            }
+            
+            const blob = new Blob([refinedContent], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `refined-prompt-${new Date().toISOString().slice(0, 10)}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Load daily stats
+        function loadDailyStats() {
+            const today = new Date().toDateString();
+            const savedStats = localStorage.getItem(`dailyStats_${today}`);
+
+            if (savedStats) {
+                dailyStats = JSON.parse(savedStats);
+            } else {
+                dailyStats = { prompts: 0, credits: 0 };
+            }
+
+            updateDailyStatsDisplay();
+        }
+
+        // Update daily stats display
+        function updateDailyStatsDisplay() {
+            document.getElementById('todayPrompts').textContent = dailyStats.prompts;
+            document.getElementById('todayCredits').textContent = dailyStats.credits;
+        }
+
+        // Save daily stats
+        function saveDailyStats() {
+            const today = new Date().toDateString();
+            localStorage.setItem(`dailyStats_${today}`, JSON.stringify(dailyStats));
+        }
+
+        // Increment daily stats
+        function incrementDailyStats(prompts = 0, credits = 0) {
+            dailyStats.prompts += prompts;
+            dailyStats.credits += credits;
+            updateDailyStatsDisplay();
+            saveDailyStats();
+        }
+
+        // Toggle admin panel
+        function toggleAdmin() {
+            const panel = document.getElementById('adminPanel');
+            panel.classList.toggle('open');
+        }
+
+        // Admin login
+        function adminLogin() {
+            const password = document.getElementById('adminPassword').value;
+
+            // Simple password check (in production, use proper authentication)
+            if (password === 'admin123') {
+                currentPassword = password;
+                document.getElementById('adminLogin').style.display = 'none';
+                document.getElementById('adminForms').style.display = 'block';
+                alert('Login successful!');
+            } else {
+                alert('Invalid password!');
+            }
+        }
+
+        // Admin logout
+        function adminLogout() {
+            currentPassword = '';
+            document.getElementById('adminLogin').style.display = 'block';
+            document.getElementById('adminForms').style.display = 'none';
+            document.getElementById('adminPassword').value = '';
+        }
+
+        // Switch admin tabs
+        function switchAdminTab(tabName) {
+            document.querySelectorAll('.admin-tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+            document.getElementById(`${tabName}Tab`).classList.add('active');
+        }
+
+        // Add model
+        async function addModel(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('modelName').value;
+            const credits = document.getElementById('modelCredits').value;
+            const outputs = document.getElementById('modelOutputs').value.split(',').map(s => s.trim());
+
+            const modelData = {
+                name: name,
+                credits: parseInt(credits),
+                outputs: outputs
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/admin/add-model`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        ...modelData,
+                        password: currentPassword
+                    })
+                });
+
+                if (response.ok) {
+                    alert('Model added successfully!');
+                    document.getElementById('addModelForm').reset();
+                    loadModels(); // Reload models
+                } else {
+                    alert('Failed to add model');
+                }
+            } catch (error) {
+                console.error('Error adding model:', error);
+                alert('Error adding model');
+            }
+        }
+
+        // Add suggestion
+        async function addSuggestion(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('suggestionName').value;
+            const prompt = document.getElementById('suggestionPrompt').value;
+            const models = document.getElementById('suggestionModels').value.split(',').map(s => s.trim());
+
+            const suggestionData = {
+                name: name,
+                template: prompt,
+                recommended_models: models
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/admin/add-suggestion`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        ...suggestionData,
+                        password: currentPassword
+                    })
+                });
+
+                if (response.ok) {
+                    alert('Suggestion added successfully!');
+                    document.getElementById('addSuggestionForm').reset();
+                } else {
+                    alert('Failed to add suggestion');
+                }
+            } catch (error) {
+                console.error('Error adding suggestion:', error);
+                alert('Error adding suggestion');
+            }
+        }
+
+
+    </script>
+</body>
+</html>

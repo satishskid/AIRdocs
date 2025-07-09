@@ -1,0 +1,42 @@
+{
+  "credits": 25,
+  "outputs": ["slides", "pdf", "web", "code"],
+  "credit_cost": {
+    "slide": 1.0,
+    "pdf_page": 0.8,
+    "web_component": 1.5,
+    "code_function": 2.5
+  },
+  "limits": {
+    "max_slides": 30,
+    "max_pdf_pages": 100,
+    "max_web_components": 15,
+    "max_code_functions": 20,
+    "min_credits": 2
+  },
+  "capabilities": [
+    "multimodal_analysis",
+    "code_generation",
+    "content_creation",
+    "data_visualization",
+    "technical_documentation"
+  ],
+  "description": "Gemini AI offers comprehensive multimodal capabilities for creating presentations, documents, web applications, and code with advanced reasoning.",
+  "api_endpoint": "https://api.gemini.google.com/v1",
+  "rate_limits": {
+    "requests_per_minute": 100,
+    "requests_per_hour": 2000
+  },
+  "supported_formats": {
+    "slides": ["pptx", "pdf", "html", "keynote"],
+    "pdf": ["pdf", "docx", "tex"],
+    "web": ["html", "css", "js", "react", "vue", "angular"],
+    "code": ["python", "javascript", "java", "cpp", "go", "rust"]
+  },
+  "special_features": {
+    "vision_analysis": true,
+    "code_explanation": true,
+    "multilingual_support": true,
+    "real_time_collaboration": true
+  }
+}

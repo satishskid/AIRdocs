@@ -15,19 +15,36 @@ import asyncio
 import psutil
 import requests
 import random
+import logging
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Any
 from pathlib import Path
 from collections import defaultdict, deque
 
-from fastapi import FastAPI, HTTPException, Depends, Form, File, UploadFile, Header
+from fastapi import FastAPI, HTTPException, Depends, Form, File, UploadFile, Header, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
 
 # Import scientific model discovery
 from model_discovery import model_discovery_service
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler('logs/greybrain-bank.log'),
+        logging.StreamHandler()
+    ]
+)
+logger = logging.getLogger(__name__)
+
+# Create logs directory if it doesn't exist
+os.makedirs('logs', exist_ok=True)
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -44,6 +61,75 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Add security middleware
+app.add_middleware(TrustedHostMiddleware, allowed_hosts=["*"])  # Configure for production
+
+# Security configuration
+security = HTTPBearer()
+ADMIN_API_KEY = os.getenv("ADMIN_API_KEY", "greybrain-admin-key-2024")
+
+# Rate limiting configuration
+rate_limit_storage = defaultdict(lambda: deque())
+RATE_LIMIT_REQUESTS = 100  # requests per minute
+RATE_LIMIT_WINDOW = 60  # seconds
+
+def check_rate_limit(client_ip: str) -> bool:
+    """Check if client has exceeded rate limit."""
+    now = time.time()
+    client_requests = rate_limit_storage[client_ip]
+
+    # Remove old requests outside the window
+    while client_requests and client_requests[0] < now - RATE_LIMIT_WINDOW:
+        client_requests.popleft()
+
+    # Check if limit exceeded
+    if len(client_requests) >= RATE_LIMIT_REQUESTS:
+        return False
+
+    # Add current request
+    client_requests.append(now)
+    return True
+
+def verify_admin_key(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    """Verify admin API key."""
+    if credentials.credentials != ADMIN_API_KEY:
+        raise HTTPException(status_code=401, detail="Invalid admin API key")
+    return credentials.credentials
+
+@app.middleware("http")
+async def rate_limit_middleware(request: Request, call_next):
+    """Rate limiting middleware."""
+    client_ip = request.client.host
+
+    # Skip rate limiting for health checks
+    if request.url.path in ["/", "/health"]:
+        response = await call_next(request)
+        return response
+
+    if not check_rate_limit(client_ip):
+        return JSONResponse(
+            status_code=429,
+            content={"detail": "Rate limit exceeded. Please try again later."}
+        )
+
+    response = await call_next(request)
+    return response
+
+@app.middleware("http")
+async def security_headers_middleware(request: Request, call_next):
+    """Add security headers."""
+    response = await call_next(request)
+
+    # Security headers
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["X-XSS-Protection"] = "1; mode=block"
+    response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    response.headers["Content-Security-Policy"] = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'"
+
+    return response
 
 # Global data storage
 models_data: Dict[str, Any] = {}
@@ -1034,7 +1120,60 @@ async def serve_frontend():
     frontend_file = Path(__file__).parent / FRONTEND_DIR / "index.html"
     if frontend_file.exists():
         return FileResponse(frontend_file)
-    return {"message": "AI Credit Aggregator API", "status": "running"}
+    return {"message": "GreyBrain Bank AI Aggregation Platform", "status": "running"}
+
+@app.get("/health")
+async def health_check():
+    """Comprehensive health check endpoint."""
+    try:
+        # Check system resources
+        cpu_percent = psutil.cpu_percent(interval=1)
+        memory = psutil.virtual_memory()
+        disk = psutil.disk_usage('/')
+
+        # Check model discovery service
+        discovery_status = "healthy" if model_discovery_service else "unavailable"
+
+        # Calculate healthy models percentage
+        total_models = len(models_data)
+        healthy_models = sum(1 for model in models_data.values()
+                           if model.get('status') == 'healthy')
+        health_percentage = (healthy_models / total_models * 100) if total_models > 0 else 0
+
+        health_status = {
+            "status": "healthy" if health_percentage > 50 else "degraded",
+            "timestamp": datetime.now().isoformat(),
+            "version": "1.0.0",
+            "uptime": get_uptime(),
+            "system": {
+                "cpu_percent": cpu_percent,
+                "memory_percent": memory.percent,
+                "disk_percent": disk.percent,
+                "available_memory_gb": round(memory.available / (1024**3), 2),
+                "free_disk_gb": round(disk.free / (1024**3), 2)
+            },
+            "models": {
+                "total": total_models,
+                "healthy": healthy_models,
+                "health_percentage": round(health_percentage, 2)
+            },
+            "services": {
+                "model_discovery": discovery_status,
+                "api": "healthy",
+                "logging": "healthy"
+            }
+        }
+
+        logger.info(f"Health check completed: {health_status['status']}")
+        return health_status
+
+    except Exception as e:
+        logger.error(f"Health check failed: {str(e)}")
+        return {
+            "status": "unhealthy",
+            "timestamp": datetime.now().isoformat(),
+            "error": str(e)
+        }
 
 @app.get("/models")
 async def get_models():
@@ -1595,7 +1734,7 @@ async def health_check():
     }
 
 @app.get("/admin/dashboard")
-async def get_admin_dashboard():
+async def get_admin_dashboard(admin_key: str = Depends(verify_admin_key)):
     """Get comprehensive admin dashboard data."""
     try:
         # Calculate overall system health
@@ -1700,7 +1839,7 @@ async def get_models_performance():
         raise HTTPException(status_code=500, detail=f"Error retrieving model performance: {str(e)}")
 
 @app.post("/admin/models/{model_name}/test")
-async def test_model_health(model_name: str):
+async def test_model_health(model_name: str, admin_key: str = Depends(verify_admin_key)):
     """Manually test a specific model's health."""
     try:
         if model_name not in model_performance:
@@ -1762,7 +1901,7 @@ async def test_model_health(model_name: str):
         raise HTTPException(status_code=500, detail=f"Error testing model: {str(e)}")
 
 @app.get("/admin/models/discovery")
-async def get_model_discovery_info():
+async def get_model_discovery_info(admin_key: str = Depends(verify_admin_key)):
     """Get information about discovered models and their sources."""
     try:
         discovered_models = model_discovery_service.discovered_models

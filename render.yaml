@@ -1,0 +1,46 @@
+# 🚀 AIRDOCS - Render Deployment Configuration
+# Infrastructure as Code for Render.com
+
+services:
+  # Main AIRDOCS Backend Service
+  - type: web
+    name: airdocs-backend
+    env: python
+    region: oregon
+    plan: free
+    buildCommand: cd backend && pip install -r requirements.txt
+    startCommand: cd backend && uvicorn app:app --host 0.0.0.0 --port $PORT
+    repo: https://github.com/satishskid/AIRdocs.git
+    branch: main
+    healthCheckPath: /health
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: DEBUG
+        value: false
+      - key: API_HOST
+        value: 0.0.0.0
+      - key: ADMIN_API_KEY
+        generateValue: true
+      - key: TOKEN_ENCRYPTION_KEY
+        generateValue: true
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: airdocs-redis
+          property: connectionString
+
+  # Redis Cache Service
+  - type: redis
+    name: airdocs-redis
+    region: oregon
+    plan: free
+    maxmemoryPolicy: allkeys-lru
+
+# Optional: PostgreSQL Database (if needed later)
+databases:
+  - name: airdocs-db
+    databaseName: airdocs
+    user: airdocs_user
+    region: oregon
+    plan: free

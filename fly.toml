@@ -1,0 +1,40 @@
+# 🚀 AIRDOCS - Fly.io Configuration
+# Generous free tier with no cold starts
+
+app = "airdocs-beta"
+primary_region = "iad"
+
+[build]
+  dockerfile = "Dockerfile.fly"
+
+[env]
+  ENVIRONMENT = "production"
+  DEBUG = "false"
+  API_HOST = "0.0.0.0"
+  PORT = "8080"
+  ADMIN_API_KEY = "airdocs-fly-admin-2024"
+  TOKEN_ENCRYPTION_KEY = "airdocs-fly-encryption-2024"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = false
+  auto_start_machines = true
+  min_machines_running = 1
+  processes = ["app"]
+
+  [http_service.checks]
+    grace_period = "10s"
+    interval = "30s"
+    method = "GET"
+    timeout = "5s"
+    path = "/health"
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory_mb = 256
+
+[metrics]
+  port = 9091
+  path = "/metrics"

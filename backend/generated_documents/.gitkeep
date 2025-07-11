@@ -1,0 +1,2 @@
+# This file ensures the generated_documents directory is tracked by Git
+# while ignoring the actual generated files for security and size reasons

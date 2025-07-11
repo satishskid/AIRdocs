@@ -265,3 +265,29 @@ cache/
 # Temporary files
 *.tmp
 *.temp
+
+# AIRDOCS Specific - CRITICAL SECURITY
+# Never commit API keys, secrets, or tokens!
+backend/venv/
+**/api_keys.json
+**/secrets.json
+**/oauth_tokens/
+**/*_secret*
+**/*_api_key*
+**/stripe_keys.json
+
+# Generated Documents (keep structure, ignore content)
+backend/generated_documents/*.pdf
+backend/generated_documents/*.docx
+backend/generated_documents/*.pptx
+backend/generated_documents/*.html
+!backend/generated_documents/.gitkeep
+
+# Logs
+backend/logs/*.log
+logs/*.log
+
+# Deployment specific
+.railway/
+.render/
+.vercel/

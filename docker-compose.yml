@@ -14,6 +14,8 @@ services:
       - ADMIN_API_KEY=greybrain-admin-key-2024
       - DEBUG=false
       - ENVIRONMENT=production
+      - REDIS_URL=redis://redis:6379
+      - TOKEN_ENCRYPTION_KEY=airdocs_token_encryption_key_2024
     volumes:
       - ./generated_content:/app/generated_content
       - ./logs:/app/logs

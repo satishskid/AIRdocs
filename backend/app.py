@@ -16,6 +16,7 @@ import psutil
 import requests
 import random
 import logging
+import aiohttp
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Any
 from pathlib import Path
@@ -23,7 +24,7 @@ from collections import defaultdict, deque
 
 from fastapi import FastAPI, HTTPException, Depends, Form, File, UploadFile, Header, Request
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, HTMLResponse, RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
@@ -220,7 +221,12 @@ SPECIALIZED_AI_SERVICES = {
                 "specialization": "executive_presentations",
                 "output_formats": ["pptx", "pdf"],
                 "max_slides": 20,
-                "strengths": ["executive_quality", "strategic_frameworks", "visual_design"]
+                "strengths": ["executive_quality", "strategic_frameworks", "visual_design"],
+                "access_type": "embedded",
+                "embed_url": "https://www.genspark.ai/",
+                "oauth_required": True,
+                "oauth_provider": "google",
+                "api_available": False
             },
             {
                 "name": "manus",
@@ -231,7 +237,12 @@ SPECIALIZED_AI_SERVICES = {
                 "specialization": "business_presentations",
                 "output_formats": ["pptx", "pdf", "keynote"],
                 "max_slides": 25,
-                "strengths": ["business_strategy", "financial_modeling", "investor_ready"]
+                "strengths": ["business_strategy", "financial_modeling", "investor_ready"],
+                "access_type": "embedded",
+                "embed_url": "https://www.manus.chat/",
+                "oauth_required": True,
+                "oauth_provider": "google",
+                "api_available": False
             },
             {
                 "name": "gamma_app",
@@ -242,7 +253,12 @@ SPECIALIZED_AI_SERVICES = {
                 "specialization": "design_presentations",
                 "output_formats": ["pptx", "pdf", "web"],
                 "max_slides": 30,
-                "strengths": ["visual_design", "interactive_elements", "modern_layouts"]
+                "strengths": ["visual_design", "interactive_elements", "modern_layouts"],
+                "access_type": "embedded",
+                "embed_url": "https://gamma.app/",
+                "oauth_required": True,
+                "oauth_provider": "google",
+                "api_available": False
             },
             {
                 "name": "tome_app",
@@ -5591,6 +5607,214 @@ async def startup_event():
     for category, services in SPECIALIZED_AI_SERVICES.items():
         primary_services = len(services["primary_tier"])
         logger.info(f"📋 {category}: {primary_services} specialized services available")
+
+# ============================================================================
+# DUAL-ARCHITECTURE API ENDPOINTS
+# ============================================================================
+
+@app.get("/services", response_class=HTMLResponse)
+async def embedded_services():
+    """Serve the embedded services interface."""
+    try:
+        with open("frontend/embedded-services.html", "r", encoding="utf-8") as f:
+            return HTMLResponse(content=f.read())
+    except FileNotFoundError:
+        return HTMLResponse(content="<h1>Embedded Services</h1><p>Embedded services interface not found.</p>")
+
+@app.get("/selector", response_class=HTMLResponse)
+async def service_selector():
+    """Serve the service selector interface."""
+    try:
+        with open("frontend/service-selector.html", "r", encoding="utf-8") as f:
+            return HTMLResponse(content=f.read())
+    except FileNotFoundError:
+        return HTMLResponse(content="<h1>Service Selector</h1><p>Service selector interface not found.</p>")
+
+@app.get("/api/services/configuration")
+async def get_services_configuration():
+    """Get configuration for all AI services including availability and quality scores."""
+    try:
+        services_config = {}
+
+        for category, category_data in SPECIALIZED_AI_SERVICES.items():
+            for service in category_data["primary_tier"]:
+                service_name = service["name"]
+                services_config[service_name] = {
+                    "name": service_name,
+                    "category": category,
+                    "quality_score": service["quality_score"],
+                    "specialization": service["specialization"],
+                    "api_available": service.get("api_available", False),
+                    "access_type": service.get("access_type", "embedded"),
+                    "embed_url": service.get("embed_url", ""),
+                    "oauth_required": service.get("oauth_required", True),
+                    "oauth_provider": service.get("oauth_provider", "google"),
+                    "free_credits": service["free_credits"],
+                    "remaining_credits": SPECIALIZED_CREDITS.get(service_name, {}).get("remaining_credits", 0),
+                    "used_credits": SPECIALIZED_CREDITS.get(service_name, {}).get("used_credits", 0),
+                    "output_formats": service.get("output_formats", []),
+                    "strengths": service.get("strengths", [])
+                }
+
+        return {
+            "success": True,
+            "services": services_config,
+            "categories": list(SPECIALIZED_AI_SERVICES.keys()),
+            "total_services": len(services_config)
+        }
+
+    except Exception as e:
+        logger.error(f"Error getting services configuration: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error getting services configuration: {str(e)}")
+
+@app.post("/api/auth/google/initiate")
+async def initiate_google_oauth():
+    """Initiate Google OAuth flow for embedded services."""
+    try:
+        # In production, this would generate a real OAuth URL
+        # For now, return a mock response
+        auth_url = "https://accounts.google.com/oauth/authorize?client_id=demo&redirect_uri=http://localhost:8000/auth/callback&scope=openid%20email%20profile"
+
+        return {
+            "success": True,
+            "auth_url": auth_url,
+            "state": "demo_state_" + str(int(time.time()))
+        }
+
+    except Exception as e:
+        logger.error(f"Error initiating Google OAuth: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error initiating OAuth: {str(e)}")
+
+@app.get("/auth/callback")
+async def oauth_callback(code: str = None, state: str = None):
+    """Handle OAuth callback from Google."""
+    try:
+        if not code:
+            raise HTTPException(status_code=400, detail="Authorization code not provided")
+
+        # In production, exchange code for access token
+        # For now, simulate successful authentication
+        access_token = "demo_access_token_" + str(int(time.time()))
+
+        # Redirect back to services page with token
+        redirect_url = f"/services?token={access_token}&authenticated=true"
+        return RedirectResponse(url=redirect_url)
+
+    except Exception as e:
+        logger.error(f"Error handling OAuth callback: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"OAuth callback error: {str(e)}")
+
+@app.post("/api/search-papers")
+async def search_academic_papers(request: Dict[str, Any]):
+    """Search academic papers using Semantic Scholar API."""
+    try:
+        query = request.get("query", "")
+        limit = request.get("limit", 10)
+
+        if not query:
+            raise HTTPException(status_code=400, detail="Query parameter required")
+
+        # Use Semantic Scholar API (free, no key required)
+        api_url = "https://api.semanticscholar.org/graph/v1/paper/search"
+        params = {
+            "query": query,
+            "limit": min(limit, 100),  # API limit
+            "fields": "title,authors,year,abstract,citationCount,url,venue"
+        }
+
+        async with aiohttp.ClientSession() as session:
+            async with session.get(api_url, params=params) as response:
+                if response.status == 200:
+                    data = await response.json()
+                    papers = data.get("data", [])
+
+                    # Format papers for frontend
+                    formatted_papers = []
+                    for paper in papers:
+                        authors = ", ".join([author.get("name", "") for author in paper.get("authors", [])])
+                        formatted_papers.append({
+                            "title": paper.get("title", ""),
+                            "authors": authors,
+                            "year": paper.get("year"),
+                            "abstract": paper.get("abstract", ""),
+                            "citationCount": paper.get("citationCount", 0),
+                            "url": paper.get("url", ""),
+                            "venue": paper.get("venue", {}).get("name", "")
+                        })
+
+                    return {
+                        "success": True,
+                        "papers": formatted_papers,
+                        "total": len(formatted_papers),
+                        "query": query
+                    }
+                else:
+                    error_text = await response.text()
+                    logger.error(f"Semantic Scholar API error {response.status}: {error_text}")
+                    raise HTTPException(status_code=response.status, detail="Failed to search papers")
+
+    except Exception as e:
+        logger.error(f"Error searching papers: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error searching papers: {str(e)}")
+
+@app.post("/api/service/route")
+async def route_to_best_service(request: Dict[str, Any]):
+    """Route request to the best available service based on quality hierarchy."""
+    try:
+        content_category = request.get("content_category", "")
+        prompt = request.get("prompt", "")
+        quality_level = request.get("quality_level", 3)
+
+        if not content_category or not prompt:
+            raise HTTPException(status_code=400, detail="content_category and prompt required")
+
+        # Use existing AI router to find best service
+        selected_model = ai_router.select_model(content_category, quality_level, ["pdf"])
+
+        if selected_model["tier"] == "primary":
+            # Route to specialized service
+            service_name = selected_model["service_name"]
+            service_config = None
+
+            # Find service configuration
+            if content_category in SPECIALIZED_AI_SERVICES:
+                for service in SPECIALIZED_AI_SERVICES[content_category]["primary_tier"]:
+                    if service["name"] == service_name:
+                        service_config = service
+                        break
+
+            if service_config:
+                return {
+                    "success": True,
+                    "routing_decision": {
+                        "service_name": service_name,
+                        "service_type": service_config.get("access_type", "embedded"),
+                        "quality_score": service_config["quality_score"],
+                        "embed_url": service_config.get("embed_url", ""),
+                        "api_available": service_config.get("api_available", False),
+                        "oauth_required": service_config.get("oauth_required", True),
+                        "category": content_category,
+                        "tier": "primary"
+                    }
+                }
+
+        # Fallback to secondary tier
+        return {
+            "success": True,
+            "routing_decision": {
+                "service_name": selected_model["service_name"],
+                "service_type": "api",
+                "quality_score": 85,
+                "api_available": True,
+                "oauth_required": False,
+                "category": content_category,
+                "tier": "secondary"
+            }
+        }
+
+    except Exception as e:
+        logger.error(f"Error routing service: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error routing service: {str(e)}")
 
 @app.on_event("shutdown")
 async def shutdown_event():

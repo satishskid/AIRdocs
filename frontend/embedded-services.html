@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIRDOCS - Embedded AI Services</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .oauth-status {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .oauth-connected {
+            background: #10b981;
+            color: white;
+        }
+
+        .oauth-disconnected {
+            background: #ef4444;
+            color: white;
+        }
+
+        .main-container {
+            display: flex;
+            height: calc(100vh - 80px);
+        }
+
+        .sidebar {
+            width: 350px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            overflow-y: auto;
+            border-right: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .service-category {
+            margin-bottom: 2rem;
+        }
+
+        .category-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .service-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .service-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .service-item.api-available {
+            border-left-color: #10b981;
+        }
+
+        .service-item.embedded-available {
+            border-left-color: #3b82f6;
+        }
+
+        .service-item.selected {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .service-info {
+            flex: 1;
+        }
+
+        .service-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .service-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .quality-score {
+            background: #f3f4f6;
+            color: #374151;
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            font-weight: 500;
+        }
+
+        .service-item.selected .quality-score {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .access-type {
+            font-size: 0.75rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+
+        .access-api {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .access-embedded {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .service-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .service-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .service-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+
+        .iframe-container {
+            flex: 1;
+            position: relative;
+            background: white;
+        }
+
+        .embedded-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: white;
+        }
+
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #e5e7eb;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .welcome-screen {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 2rem;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .welcome-icon {
+            font-size: 4rem;
+            opacity: 0.3;
+        }
+
+        .welcome-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .welcome-description {
+            font-size: 1rem;
+            color: #6b7280;
+            max-width: 500px;
+            line-height: 1.6;
+        }
+
+        .oauth-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .oauth-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .oauth-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #374151;
+        }
+
+        .oauth-description {
+            color: #6b7280;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">🧠 AIRDOCS - AI Services Hub</div>
+        <div class="user-info">
+            <div id="oauthStatus" class="oauth-status oauth-disconnected">
+                🔒 Google OAuth Required
+            </div>
+            <button id="connectOAuth" class="btn btn-primary">Connect Google</button>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="sidebar">
+            <div class="service-category">
+                <div class="category-title">📊 Presentations</div>
+                <div class="service-item embedded-available" data-service="genspark" data-category="presentations">
+                    <div class="service-info">
+                        <div class="service-name">Genspark</div>
+                        <div class="service-meta">
+                            <span class="quality-score">95/100</span>
+                            <span class="access-type access-embedded">Embedded</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="service-item embedded-available" data-service="manus" data-category="presentations">
+                    <div class="service-info">
+                        <div class="service-name">Manus</div>
+                        <div class="service-meta">
+                            <span class="quality-score">93/100</span>
+                            <span class="access-type access-embedded">Embedded</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="service-item embedded-available" data-service="gamma_app" data-category="presentations">
+                    <div class="service-info">
+                        <div class="service-name">Gamma</div>
+                        <div class="service-meta">
+                            <span class="quality-score">91/100</span>
+                            <span class="access-type access-embedded">Embedded</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="service-category">
+                <div class="category-title">📚 Academic Papers</div>
+                <div class="service-item embedded-available" data-service="paperpal" data-category="academic_papers">
+                    <div class="service-info">
+                        <div class="service-name">PaperPal</div>
+                        <div class="service-meta">
+                            <span class="quality-score">96/100</span>
+                            <span class="access-type access-embedded">Embedded</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="service-item api-available" data-service="semantic_scholar" data-category="academic_papers">
+                    <div class="service-info">
+                        <div class="service-name">Semantic Scholar</div>
+                        <div class="service-meta">
+                            <span class="quality-score">90/100</span>
+                            <span class="access-type access-api">API</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="service-category">
+                <div class="category-title">🔬 Research Reports</div>
+                <div class="service-item api-available" data-service="perplexity_pro" data-category="research_reports">
+                    <div class="service-info">
+                        <div class="service-name">Perplexity Pro</div>
+                        <div class="service-meta">
+                            <span class="quality-score">94/100</span>
+                            <span class="access-type access-api">API</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="service-item api-available" data-service="tavily_research" data-category="research_reports">
+                    <div class="service-info">
+                        <div class="service-name">Tavily Research</div>
+                        <div class="service-meta">
+                            <span class="quality-score">89/100</span>
+                            <span class="access-type access-api">API</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="service-category">
+                <div class="category-title">🎯 Marketing Campaigns</div>
+                <div class="service-item api-available" data-service="jasper_ai" data-category="marketing_campaigns">
+                    <div class="service-info">
+                        <div class="service-name">Jasper AI</div>
+                        <div class="service-meta">
+                            <span class="quality-score">92/100</span>
+                            <span class="access-type access-api">API</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="service-item embedded-available" data-service="copy_ai" data-category="marketing_campaigns">
+                    <div class="service-info">
+                        <div class="service-name">Copy.ai</div>
+                        <div class="service-meta">
+                            <span class="quality-score">89/100</span>
+                            <span class="access-type access-embedded">Embedded</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-area">
+            <div id="welcomeScreen" class="welcome-screen">
+                <div class="welcome-icon">🚀</div>
+                <div class="welcome-title">Welcome to AIRDOCS AI Services Hub</div>
+                <div class="welcome-description">
+                    Select a specialized AI service from the sidebar to get started. We provide both direct API integrations and embedded service browsers, intelligently routed based on quality scores and availability.
+                </div>
+            </div>
+
+            <div id="serviceContainer" class="hidden">
+                <div class="service-header">
+                    <div class="service-title" id="serviceTitle">Service Name</div>
+                    <div class="service-actions">
+                        <button id="refreshService" class="btn btn-secondary">🔄 Refresh</button>
+                        <button id="openExternal" class="btn btn-primary">🔗 Open External</button>
+                    </div>
+                </div>
+                <div class="iframe-container">
+                    <iframe id="serviceIframe" class="embedded-iframe" src="about:blank"></iframe>
+                    <div id="loadingOverlay" class="loading-overlay">
+                        <div class="loading-spinner"></div>
+                        <div>Loading AI service...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- OAuth Modal -->
+    <div id="oauthModal" class="oauth-modal hidden">
+        <div class="oauth-content">
+            <div class="oauth-title">🔐 Google OAuth Required</div>
+            <div class="oauth-description">
+                To access embedded AI services, please authenticate with Google. This allows seamless login to external services within AIRDOCS.
+            </div>
+            <button id="authenticateGoogle" class="btn btn-primary">Authenticate with Google</button>
+        </div>
+    </div>
+
+    <script src="embedded-services.js"></script>
+</body>
+</html>

@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIRDOCS - AI Service Selector</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #374151;
+            margin-bottom: 1rem;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #6b7280;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .content-input {
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+
+        .input-group {
+            display: inline-block;
+            text-align: left;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .input-label {
+            display: block;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+
+        .content-textarea {
+            width: 100%;
+            height: 120px;
+            padding: 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 1rem;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+        }
+
+        .content-textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .category-selector {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .category-btn {
+            padding: 1rem 2rem;
+            border: 2px solid #e5e7eb;
+            background: white;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #6b7280;
+        }
+
+        .category-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .category-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .service-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .service-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .service-card.api-available {
+            border-left: 4px solid #10b981;
+        }
+
+        .service-card.embedded-available {
+            border-left: 4px solid #3b82f6;
+        }
+
+        .service-card.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+        }
+
+        .service-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .service-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #374151;
+        }
+
+        .quality-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .service-meta {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+
+        .access-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .access-api {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .access-embedded {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .service-description {
+            color: #6b7280;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .service-strengths {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .strength-tag {
+            background: #f3f4f6;
+            color: #374151;
+            padding: 0.3rem 0.8rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+
+        .routing-info {
+            background: #f9fafb;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border-left: 4px solid #667eea;
+        }
+
+        .routing-title {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+
+        .routing-description {
+            color: #6b7280;
+            line-height: 1.6;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #6b7280;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #e5e7eb;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="title">🧠 AIRDOCS AI Service Selector</div>
+            <div class="subtitle">
+                Choose the best AI service for your content based on quality scores, specialization, and availability. 
+                Our intelligent routing system prioritizes the highest-quality services for each category.
+            </div>
+        </div>
+
+        <div class="content-input">
+            <div class="input-group">
+                <label class="input-label">📝 Describe your content requirements:</label>
+                <textarea 
+                    id="contentPrompt" 
+                    class="content-textarea" 
+                    placeholder="Example: Create a business presentation about AI market trends for Q4 2024..."
+                ></textarea>
+            </div>
+        </div>
+
+        <div class="category-selector">
+            <button class="category-btn active" data-category="presentations">📊 Presentations</button>
+            <button class="category-btn" data-category="academic_papers">📚 Academic Papers</button>
+            <button class="category-btn" data-category="research_reports">🔬 Research Reports</button>
+            <button class="category-btn" data-category="business_reports">📈 Business Reports</button>
+            <button class="category-btn" data-category="marketing_campaigns">🎯 Marketing</button>
+        </div>
+
+        <div class="routing-info">
+            <div class="routing-title">🎯 Intelligent Service Routing</div>
+            <div class="routing-description">
+                Services are ranked by quality score (95-100 = Premium, 90-94 = High Quality, 85-89 = Standard). 
+                API integrations provide direct access, while embedded services open within AIRDOCS using OAuth authentication.
+            </div>
+        </div>
+
+        <div id="servicesContainer">
+            <div class="loading">
+                <div class="loading-spinner"></div>
+                Loading AI services...
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button id="generateContent" class="btn btn-primary" disabled>
+                🚀 Generate with Selected Service
+            </button>
+            <button id="openEmbedded" class="btn btn-secondary" disabled>
+                🔗 Open Embedded Interface
+            </button>
+        </div>
+    </div>
+
+    <script>
+        class ServiceSelector {
+            constructor() {
+                this.services = {};
+                this.selectedService = null;
+                this.currentCategory = 'presentations';
+                this.init();
+            }
+
+            async init() {
+                this.setupEventListeners();
+                await this.loadServices();
+                this.renderServices();
+            }
+
+            setupEventListeners() {
+                // Category selection
+                document.querySelectorAll('.category-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+                        e.target.classList.add('active');
+                        this.currentCategory = e.target.dataset.category;
+                        this.renderServices();
+                    });
+                });
+
+                // Action buttons
+                document.getElementById('generateContent').addEventListener('click', () => {
+                    this.generateContent();
+                });
+
+                document.getElementById('openEmbedded').addEventListener('click', () => {
+                    this.openEmbeddedInterface();
+                });
+            }
+
+            async loadServices() {
+                try {
+                    const response = await fetch('/api/services/configuration');
+                    const data = await response.json();
+                    if (data.success) {
+                        this.services = data.services;
+                    }
+                } catch (error) {
+                    console.error('Failed to load services:', error);
+                }
+            }
+
+            renderServices() {
+                const container = document.getElementById('servicesContainer');
+                const categoryServices = Object.values(this.services).filter(
+                    service => service.category === this.currentCategory
+                );
+
+                // Sort by quality score (highest first)
+                categoryServices.sort((a, b) => b.quality_score - a.quality_score);
+
+                if (categoryServices.length === 0) {
+                    container.innerHTML = '<div class="loading">No services available for this category</div>';
+                    return;
+                }
+
+                const servicesHtml = categoryServices.map(service => `
+                    <div class="service-card ${service.api_available ? 'api-available' : 'embedded-available'}" 
+                         data-service="${service.name}" onclick="serviceSelector.selectService('${service.name}')">
+                        <div class="service-header">
+                            <div class="service-name">${service.name.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}</div>
+                            <div class="quality-badge">${service.quality_score}/100</div>
+                        </div>
+                        <div class="service-meta">
+                            <div class="meta-item">
+                                <span class="access-badge ${service.api_available ? 'access-api' : 'access-embedded'}">
+                                    ${service.api_available ? '🔗 API' : '🌐 Embedded'}
+                                </span>
+                            </div>
+                            <div class="meta-item">
+                                💳 ${service.remaining_credits} credits
+                            </div>
+                        </div>
+                        <div class="service-description">
+                            Specialized in ${service.specialization.replace('_', ' ')}. 
+                            ${service.api_available ? 'Direct API integration for seamless content generation.' : 'Embedded browser interface with OAuth authentication.'}
+                        </div>
+                        <div class="service-strengths">
+                            ${service.strengths.map(strength => `<span class="strength-tag">${strength.replace('_', ' ')}</span>`).join('')}
+                        </div>
+                    </div>
+                `).join('');
+
+                container.innerHTML = `<div class="services-grid">${servicesHtml}</div>`;
+            }
+
+            selectService(serviceName) {
+                // Update UI
+                document.querySelectorAll('.service-card').forEach(card => {
+                    card.classList.remove('selected');
+                });
+                document.querySelector(`[data-service="${serviceName}"]`).classList.add('selected');
+
+                this.selectedService = this.services[serviceName];
+                
+                // Enable action buttons
+                document.getElementById('generateContent').disabled = false;
+                document.getElementById('openEmbedded').disabled = false;
+            }
+
+            async generateContent() {
+                if (!this.selectedService) return;
+
+                const prompt = document.getElementById('contentPrompt').value;
+                if (!prompt.trim()) {
+                    alert('Please enter your content requirements');
+                    return;
+                }
+
+                if (this.selectedService.api_available) {
+                    // Use API integration
+                    window.location.href = `/generate?service=${this.selectedService.name}&category=${this.currentCategory}&prompt=${encodeURIComponent(prompt)}`;
+                } else {
+                    // Open embedded service
+                    this.openEmbeddedInterface();
+                }
+            }
+
+            openEmbeddedInterface() {
+                if (!this.selectedService) return;
+                window.location.href = `/services?service=${this.selectedService.name}&category=${this.currentCategory}`;
+            }
+        }
+
+        // Initialize service selector
+        const serviceSelector = new ServiceSelector();
+    </script>
+</body>
+</html>

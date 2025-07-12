@@ -30,9 +30,10 @@ class CacheManager:
     """
     
     def __init__(self, redis_url: str = None):
-        self.redis_url = redis_url or os.getenv("REDIS_URL", "redis://localhost:6379")
+        self.redis_url = redis_url or os.getenv("REDIS_URL")
         self.redis_client: Optional[redis.Redis] = None
-        self.enabled = REDIS_AVAILABLE
+        # Only enable if Redis URL is provided and Redis is available
+        self.enabled = REDIS_AVAILABLE and bool(self.redis_url)
         
         # Cache configuration
         self.default_ttl = 3600  # 1 hour default TTL
@@ -55,6 +56,11 @@ class CacheManager:
     
     async def __aenter__(self):
         """Async context manager entry."""
+        if not self.redis_url:
+            logger.info("⚠️ No Redis URL provided, cache disabled")
+            self.enabled = False
+            return self
+
         if self.enabled:
             try:
                 self.redis_client = redis.from_url(self.redis_url, decode_responses=True)

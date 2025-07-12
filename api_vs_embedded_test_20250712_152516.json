@@ -1,0 +1,75 @@
+{
+  "timestamp": "2025-07-12T15:25:16.203705",
+  "api_service_tests": [
+    {
+      "service_name": "perplexity_pro",
+      "category": "research_reports",
+      "success": false,
+      "error": "HTTP 404",
+      "response_time": 0.0010788440704345703
+    },
+    {
+      "service_name": "jasper_ai",
+      "category": "marketing_campaigns",
+      "success": false,
+      "error": "HTTP 404",
+      "response_time": 0.0012202262878417969
+    },
+    {
+      "service_name": "semantic_scholar",
+      "category": "academic_papers",
+      "success": false,
+      "error": "HTTP 404",
+      "response_time": 0.001111745834350586
+    }
+  ],
+  "embedded_service_tests": [
+    {
+      "service_name": "genspark",
+      "category": "presentations",
+      "success": false,
+      "error": "HTTP 500"
+    },
+    {
+      "service_name": "paperpal",
+      "category": "academic_papers",
+      "success": false,
+      "error": "HTTP 500"
+    },
+    {
+      "service_name": "manus",
+      "category": "presentations",
+      "success": false,
+      "error": "HTTP 500"
+    }
+  ],
+  "service_configuration_test": {
+    "success": true,
+    "total_services": 20,
+    "api_services_count": 0,
+    "embedded_services_count": 20,
+    "categories": [
+      "presentations",
+      "academic_papers",
+      "research_reports",
+      "business_reports",
+      "marketing_campaigns"
+    ],
+    "services_by_category": {
+      "presentations": 5,
+      "academic_papers": 6,
+      "research_reports": 3,
+      "business_reports": 3,
+      "marketing_campaigns": 3
+    }
+  },
+  "summary": {
+    "api_services_tested": 3,
+    "api_services_real": 0,
+    "api_real_percentage": 0.0,
+    "embedded_services_tested": 3,
+    "embedded_services_routing_correctly": 0,
+    "embedded_routing_percentage": 0.0,
+    "dual_architecture_working": false
+  }
+}

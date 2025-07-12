@@ -1,0 +1,118 @@
+{
+  "timestamp": "2025-07-12T15:27:22.296724",
+  "validation_results": {
+    "service_configuration": {
+      "success": true,
+      "total_services": 20,
+      "api_services_count": 0,
+      "embedded_services_count": 20,
+      "categories": [
+        "presentations",
+        "academic_papers",
+        "research_reports",
+        "business_reports",
+        "marketing_campaigns"
+      ],
+      "services_by_category": {
+        "presentations": 5,
+        "academic_papers": 6,
+        "research_reports": 3,
+        "business_reports": 3,
+        "marketing_campaigns": 3
+      },
+      "quality_scores": [
+        95,
+        93,
+        91,
+        89,
+        87,
+        96,
+        94,
+        92,
+        95,
+        93,
+        90,
+        94,
+        91,
+        89,
+        94,
+        96,
+        95,
+        92,
+        89,
+        95
+      ],
+      "sample_services": [
+        "genspark",
+        "manus",
+        "gamma_app",
+        "tome_app",
+        "beautiful_ai"
+      ]
+    },
+    "embedded_interfaces": {
+      "/services": {
+        "success": true,
+        "name": "Embedded Services Hub",
+        "content_length": 71,
+        "has_oauth": false,
+        "has_iframe": false,
+        "has_service_selection": true
+      },
+      "/selector": {
+        "success": false,
+        "name": "Service Selector",
+        "error": "HTTP 404"
+      },
+      "/": {
+        "success": true,
+        "name": "Main Interface",
+        "content_length": 193645,
+        "has_oauth": false,
+        "has_iframe": false,
+        "has_service_selection": true
+      }
+    },
+    "oauth_flow": {
+      "success": true,
+      "has_auth_url": true,
+      "has_state": true,
+      "auth_url_valid": true
+    },
+    "api_search_papers": {
+      "success": false,
+      "error": "HTTP 500"
+    },
+    "service_routing": {
+      "presentations": {
+        "success": false,
+        "error": "HTTP 500"
+      },
+      "academic_papers": {
+        "success": false,
+        "error": "HTTP 500"
+      },
+      "research_reports": {
+        "success": false,
+        "error": "HTTP 500"
+      }
+    }
+  },
+  "summary": {
+    "total_tests": 9,
+    "passed_tests": 4,
+    "success_rate": 44.44444444444444,
+    "dual_architecture_implemented": false,
+    "total_services_configured": 20,
+    "api_services_available": 0,
+    "embedded_services_available": 20,
+    "categories_supported": 5,
+    "key_features_working": {
+      "service_configuration": true,
+      "embedded_interfaces": true,
+      "oauth_authentication": true,
+      "api_integration": false,
+      "intelligent_routing": false
+    }
+  }
+}

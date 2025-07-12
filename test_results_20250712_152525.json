@@ -1,0 +1,270 @@
+{
+  "test_results": [
+    "ServiceTestResult(service_name='genspark', category='presentations', prompt='Create a comprehensive business presentation about the future of artificial intelligence in healthcare, including market analysis, key technologies, implementation challenges, and ROI projections for hospital systems.', output_content='', word_count=0, response_time=0.013720989227294922, quality_score=0, access_type='embedded', is_real_ai=False, specialization_evident=False, professional_formatting=False, contains_expected_keywords=False, unique_content_hash='', timestamp=datetime.datetime(2025, 7, 12, 15, 25, 25, 665162), error_message='HTTP 404: {\"detail\":\"Not Found\"}')",
+    "ServiceTestResult(service_name='manus', category='presentations', prompt='Create a comprehensive business presentation about the future of artificial intelligence in healthcare, including market analysis, key technologies, implementation challenges, and ROI projections for hospital systems.', output_content='', word_count=0, response_time=0.000701904296875, quality_score=0, access_type='embedded', is_real_ai=False, specialization_evident=False, professional_formatting=False, contains_expected_keywords=False, unique_content_hash='', timestamp=datetime.datetime(2025, 7, 12, 15, 25, 25, 665978), error_message='HTTP 404: {\"detail\":\"Not Found\"}')",
+    "ServiceTestResult(service_name='gamma_app', category='presentations', prompt='Create a comprehensive business presentation about the future of artificial intelligence in healthcare, including market analysis, key technologies, implementation challenges, and ROI projections for hospital systems.', output_content='', word_count=0, response_time=0.0005052089691162109, quality_score=0, access_type='embedded', is_real_ai=False, specialization_evident=False, professional_formatting=False, contains_expected_keywords=False, unique_content_hash='', timestamp=datetime.datetime(2025, 7, 12, 15, 25, 25, 666585), error_message='HTTP 404: {\"detail\":\"Not Found\"}')",
+    "ServiceTestResult(service_name='tome_app', category='presentations', prompt='Create a comprehensive business presentation about the future of artificial intelligence in healthcare, including market analysis, key technologies, implementation challenges, and ROI projections for hospital systems.', output_content='', word_count=0, response_time=0.0005600452423095703, quality_score=0, access_type='embedded', is_real_ai=False, specialization_evident=False, professional_formatting=False, contains_expected_keywords=False, unique_content_hash='', timestamp=datetime.datetime(2025, 7, 12, 15, 25, 25, 667240), error_message='HTTP 404: {\"detail\":\"Not Found\"}')",
+    "ServiceTestResult(service_name='beautiful_ai', category='presentations', prompt='Create a comprehensive business presentation about the future of artificial intelligence in healthcare, including market analysis, key technologies, implementation challenges, and ROI projections for hospital systems.', output_content='', word_count=0, response_time=0.000476837158203125, quality_score=0, access_type='embedded', is_real_ai=False, specialization_evident=False, professional_formatting=False, contains_expected_keywords=False, unique_content_hash='', timestamp=datetime.datetime(2025, 7, 12, 15, 25, 25, 667835), error_message='HTTP 404: {\"detail\":\"Not Found\"}')",
+    "ServiceTestResult(service_name='paperpal', category='academic_papers', prompt='Write a comprehensive academic research paper on the impact of machine learning algorithms on climate change prediction models, including literature review, methodology, results analysis, and future research directions.', output_content='', word_count=0, response_time=0.00046515464782714844, quality_score=0, access_type='embedded', is_real_ai=False, specialization_evident=False, professional_formatting=False, contains_expected_keywords=False, unique_content_hash='', timestamp=datetime.datetime(2025, 7, 12, 15, 25, 25, 668434), error_message='HTTP 404: {\"detail\":\"Not Found\"}')",
+    "ServiceTestResult(service_name='consensus_ai', category='academic_papers', prompt='Write a comprehensive academic research paper on the impact of machine learning algorithms on climate change prediction models, including literature review, methodology, results analysis, and future research directions.', output_content='', word_count=0, response_time=0.00048089027404785156, quality_score=0, access_type='embedded', is_real_ai=False, specialization_evident=False, professional_formatting=False, contains_expected_keywords=False, unique_content_hash='', timestamp=datetime.datetime(2025, 7, 12, 15, 25, 25, 669122), error_message='HTTP 404: {\"detail\":\"Not Found\"}')",
+    "ServiceTestResult(service_name='jenni_ai', category='academic_papers', prompt='Write a comprehensive academic research paper on the impact of machine learning algorithms on climate change prediction models, including literature review, methodology, results analysis, and future research directions.', output_content='', word_count=0, response_time=0.0004899501800537109, quality_score=0, access_type='embedded', is_real_ai=False, specialization_evident=False, professional_formatting=False, contains_expected_keywords=False, unique_content_hash='', timestamp=datetime.datetime(2025, 7, 12, 15, 25, 25, 669728), error_message='HTTP 404: {\"detail\":\"Not Found\"}')",
+    "ServiceTestResult(service_name='elicit_ai', category='academic_papers', prompt='Write a comprehensive academic research paper on the impact of machine learning algorithms on climate change prediction models, including literature review, methodology, results analysis, and future research directions.', output_content='', word_count=0, response_time=0.0006430149078369141, quality_score=0, access_type='embedded', is_real_ai=False, specialization_evident=False, professional_formatting=False, contains_expected_keywords=False, unique_content_hash='', timestamp=datetime.datetime(2025, 7, 12, 15, 25, 25, 670466), error_message='HTTP 404: {\"detail\":\"Not Found\"}')",
+    "ServiceTestResult(service_name='scispace', category='academic_papers', prompt='Write a comprehensive academic research paper on the impact of machine learning algorithms on climate change prediction models, including literature review, methodology, results analysis, and future research directions.', output_content='', word_count=0, response_time=0.0004627704620361328, quality_score=0, access_type='embedded', is_real_ai=False, specialization_evident=False, professional_formatting=False, contains_expected_keywords=False, unique_content_hash='', timestamp=datetime.datetime(2025, 7, 12, 15, 25, 25, 671014), error_message='HTTP 404: {\"detail\":\"Not Found\"}')",
+    "ServiceTestResult(service_name='semantic_scholar', category='academic_papers', prompt='Write a comprehensive academic research paper on the impact of machine learning algorithms on climate change prediction models, including literature review, methodology, results analysis, and future research directions.', output_content='', word_count=0, response_time=0.0004451274871826172, quality_score=0, access_type='api', is_real_ai=False, specialization_evident=False, professional_formatting=False, contains_expected_keywords=False, unique_content_hash='', timestamp=datetime.datetime(2025, 7, 12, 15, 25, 25, 671571), error_message='HTTP 404: {\"detail\":\"Not Found\"}')",
+    "ServiceTestResult(service_name='perplexity_pro', category='research_reports', prompt='Conduct comprehensive research on the global renewable energy market trends for 2024-2025, including policy changes, technological breakthroughs, investment flows, and regional market dynamics.', output_content='', word_count=0, response_time=0.0004887580871582031, quality_score=0, access_type='api', is_real_ai=False, specialization_evident=False, professional_formatting=False, contains_expected_keywords=False, unique_content_hash='', timestamp=datetime.datetime(2025, 7, 12, 15, 25, 25, 672200), error_message='HTTP 404: {\"detail\":\"Not Found\"}')",
+    "ServiceTestResult(service_name='you_research', category='research_reports', prompt='Conduct comprehensive research on the global renewable energy market trends for 2024-2025, including policy changes, technological breakthroughs, investment flows, and regional market dynamics.', output_content='', word_count=0, response_time=0.0005168914794921875, quality_score=0, access_type='embedded', is_real_ai=False, specialization_evident=False, professional_formatting=False, contains_expected_keywords=False, unique_content_hash='', timestamp=datetime.datetime(2025, 7, 12, 15, 25, 25, 672816), error_message='HTTP 404: {\"detail\":\"Not Found\"}')",
+    "ServiceTestResult(service_name='tavily_research', category='research_reports', prompt='Conduct comprehensive research on the global renewable energy market trends for 2024-2025, including policy changes, technological breakthroughs, investment flows, and regional market dynamics.', output_content='', word_count=0, response_time=0.00045013427734375, quality_score=0, access_type='api', is_real_ai=False, specialization_evident=False, professional_formatting=False, contains_expected_keywords=False, unique_content_hash='', timestamp=datetime.datetime(2025, 7, 12, 15, 25, 25, 673386), error_message='HTTP 404: {\"detail\":\"Not Found\"}')",
+    "ServiceTestResult(service_name='pitchbook_ai', category='business_reports', prompt='Analyze the competitive landscape and market opportunities for fintech startups in Southeast Asia, including regulatory environment, key players, funding trends, and strategic recommendations.', output_content='', word_count=0, response_time=0.000537872314453125, quality_score=0, access_type='embedded', is_real_ai=False, specialization_evident=False, professional_formatting=False, contains_expected_keywords=False, unique_content_hash='', timestamp=datetime.datetime(2025, 7, 12, 15, 25, 25, 674129), error_message='HTTP 404: {\"detail\":\"Not Found\"}')",
+    "ServiceTestResult(service_name='cb_insights', category='business_reports', prompt='Analyze the competitive landscape and market opportunities for fintech startups in Southeast Asia, including regulatory environment, key players, funding trends, and strategic recommendations.', output_content='', word_count=0, response_time=0.0004737377166748047, quality_score=0, access_type='embedded', is_real_ai=False, specialization_evident=False, professional_formatting=False, contains_expected_keywords=False, unique_content_hash='', timestamp=datetime.datetime(2025, 7, 12, 15, 25, 25, 674706), error_message='HTTP 404: {\"detail\":\"Not Found\"}')",
+    "ServiceTestResult(service_name='analyst_ai', category='business_reports', prompt='Analyze the competitive landscape and market opportunities for fintech startups in Southeast Asia, including regulatory environment, key players, funding trends, and strategic recommendations.', output_content='', word_count=0, response_time=0.0007970333099365234, quality_score=0, access_type='embedded', is_real_ai=False, specialization_evident=False, professional_formatting=False, contains_expected_keywords=False, unique_content_hash='', timestamp=datetime.datetime(2025, 7, 12, 15, 25, 25, 675657), error_message='HTTP 404: {\"detail\":\"Not Found\"}')",
+    "ServiceTestResult(service_name='persado', category='marketing_campaigns', prompt='Design a comprehensive digital marketing campaign for a B2B SaaS productivity platform targeting remote teams, including messaging strategy, channel selection, content calendar, and performance metrics.', output_content='', word_count=0, response_time=0.0005428791046142578, quality_score=0, access_type='embedded', is_real_ai=False, specialization_evident=False, professional_formatting=False, contains_expected_keywords=False, unique_content_hash='', timestamp=datetime.datetime(2025, 7, 12, 15, 25, 25, 676381), error_message='HTTP 404: {\"detail\":\"Not Found\"}')",
+    "ServiceTestResult(service_name='jasper_ai', category='marketing_campaigns', prompt='Design a comprehensive digital marketing campaign for a B2B SaaS productivity platform targeting remote teams, including messaging strategy, channel selection, content calendar, and performance metrics.', output_content='', word_count=0, response_time=0.00048089027404785156, quality_score=0, access_type='api', is_real_ai=False, specialization_evident=False, professional_formatting=False, contains_expected_keywords=False, unique_content_hash='', timestamp=datetime.datetime(2025, 7, 12, 15, 25, 25, 676999), error_message='HTTP 404: {\"detail\":\"Not Found\"}')",
+    "ServiceTestResult(service_name='copy_ai', category='marketing_campaigns', prompt='Design a comprehensive digital marketing campaign for a B2B SaaS productivity platform targeting remote teams, including messaging strategy, channel selection, content calendar, and performance metrics.', output_content='', word_count=0, response_time=0.0005171298980712891, quality_score=0, access_type='embedded', is_real_ai=False, specialization_evident=False, professional_formatting=False, contains_expected_keywords=False, unique_content_hash='', timestamp=datetime.datetime(2025, 7, 12, 15, 25, 25, 677645), error_message='HTTP 404: {\"detail\":\"Not Found\"}')"
+  ],
+  "analysis": {
+    "overall_stats": {
+      "total_services_tested": 20,
+      "successful_tests": 0,
+      "real_ai_services": 0,
+      "template_services": 20,
+      "real_ai_percentage": 0.0
+    },
+    "category_analysis": {
+      "presentations": {
+        "total_services": 5,
+        "real_ai_count": 0,
+        "template_count": 5,
+        "avg_word_count": 0.0,
+        "avg_response_time": 0.0031929969787597655,
+        "services": [
+          {
+            "name": "genspark",
+            "quality_score": 0,
+            "is_real_ai": false,
+            "word_count": 0,
+            "access_type": "embedded"
+          },
+          {
+            "name": "manus",
+            "quality_score": 0,
+            "is_real_ai": false,
+            "word_count": 0,
+            "access_type": "embedded"
+          },
+          {
+            "name": "gamma_app",
+            "quality_score": 0,
+            "is_real_ai": false,
+            "word_count": 0,
+            "access_type": "embedded"
+          },
+          {
+            "name": "tome_app",
+            "quality_score": 0,
+            "is_real_ai": false,
+            "word_count": 0,
+            "access_type": "embedded"
+          },
+          {
+            "name": "beautiful_ai",
+            "quality_score": 0,
+            "is_real_ai": false,
+            "word_count": 0,
+            "access_type": "embedded"
+          }
+        ]
+      },
+      "academic_papers": {
+        "total_services": 6,
+        "real_ai_count": 0,
+        "template_count": 6,
+        "avg_word_count": 0.0,
+        "avg_response_time": 0.0004978179931640625,
+        "services": [
+          {
+            "name": "paperpal",
+            "quality_score": 0,
+            "is_real_ai": false,
+            "word_count": 0,
+            "access_type": "embedded"
+          },
+          {
+            "name": "consensus_ai",
+            "quality_score": 0,
+            "is_real_ai": false,
+            "word_count": 0,
+            "access_type": "embedded"
+          },
+          {
+            "name": "jenni_ai",
+            "quality_score": 0,
+            "is_real_ai": false,
+            "word_count": 0,
+            "access_type": "embedded"
+          },
+          {
+            "name": "elicit_ai",
+            "quality_score": 0,
+            "is_real_ai": false,
+            "word_count": 0,
+            "access_type": "embedded"
+          },
+          {
+            "name": "scispace",
+            "quality_score": 0,
+            "is_real_ai": false,
+            "word_count": 0,
+            "access_type": "embedded"
+          },
+          {
+            "name": "semantic_scholar",
+            "quality_score": 0,
+            "is_real_ai": false,
+            "word_count": 0,
+            "access_type": "api"
+          }
+        ]
+      },
+      "research_reports": {
+        "total_services": 3,
+        "real_ai_count": 0,
+        "template_count": 3,
+        "avg_word_count": 0.0,
+        "avg_response_time": 0.0004852612813313802,
+        "services": [
+          {
+            "name": "perplexity_pro",
+            "quality_score": 0,
+            "is_real_ai": false,
+            "word_count": 0,
+            "access_type": "api"
+          },
+          {
+            "name": "you_research",
+            "quality_score": 0,
+            "is_real_ai": false,
+            "word_count": 0,
+            "access_type": "embedded"
+          },
+          {
+            "name": "tavily_research",
+            "quality_score": 0,
+            "is_real_ai": false,
+            "word_count": 0,
+            "access_type": "api"
+          }
+        ]
+      },
+      "business_reports": {
+        "total_services": 3,
+        "real_ai_count": 0,
+        "template_count": 3,
+        "avg_word_count": 0.0,
+        "avg_response_time": 0.000602881113688151,
+        "services": [
+          {
+            "name": "pitchbook_ai",
+            "quality_score": 0,
+            "is_real_ai": false,
+            "word_count": 0,
+            "access_type": "embedded"
+          },
+          {
+            "name": "cb_insights",
+            "quality_score": 0,
+            "is_real_ai": false,
+            "word_count": 0,
+            "access_type": "embedded"
+          },
+          {
+            "name": "analyst_ai",
+            "quality_score": 0,
+            "is_real_ai": false,
+            "word_count": 0,
+            "access_type": "embedded"
+          }
+        ]
+      },
+      "marketing_campaigns": {
+        "total_services": 3,
+        "real_ai_count": 0,
+        "template_count": 3,
+        "avg_word_count": 0.0,
+        "avg_response_time": 0.0005136330922444662,
+        "services": [
+          {
+            "name": "persado",
+            "quality_score": 0,
+            "is_real_ai": false,
+            "word_count": 0,
+            "access_type": "embedded"
+          },
+          {
+            "name": "jasper_ai",
+            "quality_score": 0,
+            "is_real_ai": false,
+            "word_count": 0,
+            "access_type": "api"
+          },
+          {
+            "name": "copy_ai",
+            "quality_score": 0,
+            "is_real_ai": false,
+            "word_count": 0,
+            "access_type": "embedded"
+          }
+        ]
+      }
+    },
+    "quality_correlation": {
+      "premium_tier_95_plus": {
+        "count": 0,
+        "real_ai_percentage": 0,
+        "avg_word_count": 0
+      },
+      "high_quality_90_94": {
+        "count": 0,
+        "real_ai_percentage": 0,
+        "avg_word_count": 0
+      },
+      "standard_85_89": {
+        "count": 20,
+        "real_ai_percentage": 0.0,
+        "avg_word_count": 0.0
+      }
+    },
+    "uniqueness_analysis": {
+      "presentations": {
+        "total_outputs": 5,
+        "unique_outputs": 0,
+        "uniqueness_percentage": 0.0,
+        "duplicate_content_detected": false
+      },
+      "academic_papers": {
+        "total_outputs": 6,
+        "unique_outputs": 0,
+        "uniqueness_percentage": 0.0,
+        "duplicate_content_detected": false
+      },
+      "research_reports": {
+        "total_outputs": 3,
+        "unique_outputs": 0,
+        "uniqueness_percentage": 0.0,
+        "duplicate_content_detected": false
+      },
+      "business_reports": {
+        "total_outputs": 3,
+        "unique_outputs": 0,
+        "uniqueness_percentage": 0.0,
+        "duplicate_content_detected": false
+      },
+      "marketing_campaigns": {
+        "total_outputs": 3,
+        "unique_outputs": 0,
+        "uniqueness_percentage": 0.0,
+        "duplicate_content_detected": false
+      }
+    }
+  },
+  "timestamp": "2025-07-12T15:25:25.677700"
+}

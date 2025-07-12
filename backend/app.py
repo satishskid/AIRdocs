@@ -197,7 +197,7 @@ async def security_headers_middleware(request: Request, call_next):
     response.headers["X-XSS-Protection"] = "1; mode=block"
     response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
-    response.headers["Content-Security-Policy"] = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline'; connect-src 'self'"
+    response.headers["Content-Security-Policy"] = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; img-src 'self' data: https://fastapi.tiangolo.com https://cdn.jsdelivr.net; connect-src 'self'"
 
     return response
 
@@ -4095,7 +4095,15 @@ async def serve_frontend():
     frontend_file = Path(__file__).parent / FRONTEND_DIR / "index.html"
     if frontend_file.exists():
         return FileResponse(frontend_file)
-    return {"message": "GreyBrain Bank AI Aggregation Platform", "status": "running"}
+    return {"message": "AIRDOCS AI Document Factory", "status": "running", "version": "1.0.0"}
+
+@app.get("/beta-test.html")
+async def serve_beta_test():
+    """Serve the beta testing interface."""
+    beta_file = Path(__file__).parent / FRONTEND_DIR / "beta-test.html"
+    if beta_file.exists():
+        return FileResponse(beta_file)
+    return {"error": "Beta test interface not found"}
 
 @app.get("/health")
 async def health_check():

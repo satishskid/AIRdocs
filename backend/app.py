@@ -116,7 +116,10 @@ if PAYMENT_ENABLED:
     logger.info("✅ Payment routes registered")
 
 # Mount static files for frontend assets
-FRONTEND_DIR = "../frontend"
+FRONTEND_DIR = "./frontend"
+# Create assets directory if it doesn't exist
+import os
+os.makedirs(f"{FRONTEND_DIR}/assets", exist_ok=True)
 app.mount("/assets", StaticFiles(directory=f"{FRONTEND_DIR}/assets"), name="assets")
 app.mount("/static", StaticFiles(directory=f"{FRONTEND_DIR}"), name="static")
 
@@ -1034,7 +1037,7 @@ system_metrics = {
 ADMIN_PASSWORD_HASH = "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8"  # "password"
 MODELS_DIR = Path("../models")
 PROMPTS_DIR = Path("../prompts")
-FRONTEND_DIR = Path("../frontend")
+FRONTEND_DIR = Path("./frontend")
 
 # Pydantic models
 class PromptRequest(BaseModel):

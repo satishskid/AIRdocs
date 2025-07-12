@@ -5,7 +5,7 @@ services:
   # Main AIRDOCS Backend Service
   - type: web
     name: airdocs-backend
-    runtime: python3
+    env: python
     region: oregon
     plan: free
     buildCommand: cd ai-aggregator/backend && pip install -r requirements.txt
@@ -31,3 +31,4 @@ services:
     region: oregon
     plan: free
     maxmemoryPolicy: allkeys-lru
+    ipAllowList: []

@@ -43,12 +43,19 @@ class AuthenticationManager:
         self.session: Optional[aiohttp.ClientSession] = None
         
         # Initialize encryption for secure token storage
-        if encryption_key:
-            self.cipher = Fernet(encryption_key.encode())
-        else:
-            # Generate a key for development (use proper key management in production)
-            key = os.getenv("TOKEN_ENCRYPTION_KEY", Fernet.generate_key().decode())
-            self.cipher = Fernet(key.encode())
+        try:
+            if encryption_key:
+                self.cipher = Fernet(encryption_key.encode())
+            else:
+                # Generate a key for development (use proper key management in production)
+                key = os.getenv("TOKEN_ENCRYPTION_KEY", Fernet.generate_key().decode())
+                self.cipher = Fernet(key.encode())
+        except (ValueError, Exception) as e:
+            # If the provided key is invalid, generate a new one
+            logger.warning(f"Invalid encryption key provided, generating new one: {e}")
+            new_key = Fernet.generate_key().decode()
+            self.cipher = Fernet(new_key.encode())
+            logger.info("✅ Generated new encryption key for token security")
         
         # Token refresh background task
         self._refresh_task = None

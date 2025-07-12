@@ -142,6 +142,42 @@
                 <p>System Management</p>
             </a>
         </div>
+
+        <div style="margin-top: 30px; text-align: center;">
+            <button onclick="testAPI()" style="background: #667eea; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">
+                🧪 Test API Connection
+            </button>
+            <div id="testResult" style="margin-top: 10px; padding: 10px; border-radius: 8px; display: none;"></div>
+        </div>
     </div>
+
+    <script>
+        async function testAPI() {
+            const resultDiv = document.getElementById('testResult');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = 'Testing API connection...';
+            resultDiv.style.background = '#f0f4ff';
+            resultDiv.style.color = '#333';
+
+            try {
+                const response = await fetch('/health');
+                const data = await response.json();
+
+                if (response.ok) {
+                    resultDiv.innerHTML = `✅ API Connection Successful!<br>Status: ${data.status}<br>Version: ${data.version}`;
+                    resultDiv.style.background = '#d4edda';
+                    resultDiv.style.color = '#155724';
+                } else {
+                    resultDiv.innerHTML = `❌ API Error: ${response.status}`;
+                    resultDiv.style.background = '#f8d7da';
+                    resultDiv.style.color = '#721c24';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `❌ Connection Failed: ${error.message}`;
+                resultDiv.style.background = '#f8d7da';
+                resultDiv.style.color = '#721c24';
+            }
+        }
+    </script>
 </body>
 </html>

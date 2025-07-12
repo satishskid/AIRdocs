@@ -3385,8 +3385,8 @@ Examples:
             credits: 0
         };
 
-        // API base URL
-        const API_BASE = 'http://localhost:8002';
+        // API base URL - use relative URLs for production
+        const API_BASE = window.location.origin;
 
         // Global variables for interface
         let currentCategory = '';

@@ -3,428 +3,145 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AIRDOCS Beta Test Interface</title>
+    <title>AIRDOCS - AI Document Factory (Beta)</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            margin: 0;
             padding: 20px;
+            color: #333;
         }
-        
         .container {
-            max-width: 1200px;
+            max-width: 800px;
             margin: 0 auto;
             background: white;
             border-radius: 20px;
+            padding: 40px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            overflow: hidden;
         }
-        
         .header {
-            background: linear-gradient(135deg, #ff6b6b, #ffa726);
-            color: white;
-            padding: 30px;
             text-align: center;
+            margin-bottom: 40px;
         }
-        
         .header h1 {
+            color: #667eea;
             font-size: 2.5rem;
             margin-bottom: 10px;
         }
-        
-        .header p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-        }
-        
-        .content {
-            padding: 40px;
-        }
-        
-        .test-section {
-            margin-bottom: 40px;
-            padding: 30px;
-            border: 2px solid #f0f0f0;
-            border-radius: 15px;
-            background: #fafafa;
-        }
-        
-        .test-section h2 {
-            color: #333;
-            margin-bottom: 20px;
-            font-size: 1.5rem;
-        }
-        
-        .test-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-        
-        .test-card {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            border-left: 4px solid #667eea;
-        }
-        
-        .test-card h3 {
-            color: #333;
-            margin-bottom: 10px;
-        }
-        
-        .test-card p {
-            color: #666;
-            margin-bottom: 15px;
-            line-height: 1.5;
-        }
-        
-        .btn {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+        .beta-badge {
+            background: #ff6b6b;
             color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
         }
-        
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        .description {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 1.1rem;
+            color: #666;
         }
-        
-        .btn-secondary {
-            background: linear-gradient(135deg, #ffa726, #ff6b6b);
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
         }
-        
-        .status-indicator {
-            display: inline-block;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            margin-right: 8px;
-        }
-        
-        .status-healthy { background: #4caf50; }
-        .status-warning { background: #ff9800; }
-        .status-error { background: #f44336; }
-        
-        .api-endpoint {
-            background: #f5f5f5;
-            padding: 10px;
-            border-radius: 5px;
-            font-family: 'Courier New', monospace;
-            font-size: 12px;
-            margin: 10px 0;
-            word-break: break-all;
-        }
-        
-        .feature-list {
-            list-style: none;
-            margin: 15px 0;
-        }
-        
-        .feature-list li {
-            padding: 5px 0;
-            color: #555;
-        }
-        
-        .feature-list li:before {
-            content: "✅ ";
-            margin-right: 8px;
-        }
-        
-        .config-section {
-            background: #e8f5e8;
+        .stat-card {
+            text-align: center;
             padding: 20px;
-            border-radius: 10px;
-            margin: 20px 0;
+            background: #f8f9fa;
+            border-radius: 12px;
         }
-        
-        .config-section h4 {
-            color: #2e7d32;
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+        }
+        .links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        .link-card {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s;
+        }
+        .link-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .link-icon {
+            font-size: 2rem;
             margin-bottom: 10px;
-        }
-        
-        .env-var {
-            background: #fff;
-            padding: 8px 12px;
-            border-radius: 5px;
-            margin: 5px 0;
-            font-family: 'Courier New', monospace;
-            font-size: 12px;
-            border-left: 3px solid #4caf50;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🚀 AIRDOCS Beta Test Interface</h1>
-            <p>Production-Ready AI Document Factory | All Critical Features Implemented</p>
+            <h1>AIRDOCS <span class="beta-badge">BETA</span></h1>
         </div>
         
-        <div class="content">
-            <!-- System Status Section -->
-            <div class="test-section">
-                <h2><span class="status-indicator status-healthy"></span>System Status & Health</h2>
-                <div class="test-grid">
-                    <div class="test-card">
-                        <h3>🏥 System Health</h3>
-                        <p>Monitor CPU, memory, disk usage, and overall system performance.</p>
-                        <div class="api-endpoint">GET /health</div>
-                        <a href="/health" class="btn" target="_blank">Check Health</a>
-                    </div>
-                    
-                    <div class="test-card">
-                        <h3>📊 API Documentation</h3>
-                        <p>Interactive Swagger UI with all available endpoints and schemas.</p>
-                        <div class="api-endpoint">GET /docs</div>
-                        <a href="/docs" class="btn" target="_blank">View API Docs</a>
-                    </div>
-                    
-                    <div class="test-card">
-                        <h3>🎯 AI Routing Stats</h3>
-                        <p>View 20+ specialized AI services, credits, and routing efficiency.</p>
-                        <div class="api-endpoint">GET /ai-routing-stats</div>
-                        <a href="/ai-routing-stats" class="btn" target="_blank">View Routing</a>
-                    </div>
-                </div>
+        <div class="description">
+            <p>AI Document Factory - Generate Professional Documents with Specialized AI</p>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number">443</div>
+                <div class="stat-label">Free Credits</div>
             </div>
-            
-            <!-- Production Features Section -->
-            <div class="test-section">
-                <h2><span class="status-indicator status-healthy"></span>Production Features</h2>
-                <div class="test-grid">
-                    <div class="test-card">
-                        <h3>🔐 OAuth 2.0 Integration</h3>
-                        <p>Authentication status for 12+ specialized AI services.</p>
-                        <ul class="feature-list">
-                            <li>PaperPal, Jenni, SciSpace (Academic)</li>
-                            <li>Genspark, Manus, Gamma (Presentations)</li>
-                            <li>Perplexity, Jasper, Copy.ai (Content)</li>
-                        </ul>
-                        <a href="/auth/status" class="btn" target="_blank">Check Auth Status</a>
-                    </div>
-                    
-                    <div class="test-card">
-                        <h3>⚡ Circuit Breakers</h3>
-                        <p>Automatic failover and service isolation for 99.9% uptime.</p>
-                        <ul class="feature-list">
-                            <li>5-tier failover chains</li>
-                            <li>Automatic service recovery</li>
-                            <li>Real-time health monitoring</li>
-                        </ul>
-                        <a href="/circuit-breaker-status" class="btn" target="_blank">View Circuit Status</a>
-                    </div>
-                    
-                    <div class="test-card">
-                        <h3>💾 Redis Caching</h3>
-                        <p>Intelligent caching for 50%+ performance improvement.</p>
-                        <ul class="feature-list">
-                            <li>Content-aware cache keys</li>
-                            <li>Category-specific TTL</li>
-                            <li>Hit rate optimization</li>
-                        </ul>
-                        <a href="/cache-status" class="btn" target="_blank">View Cache Stats</a>
-                    </div>
-                    
-                    <div class="test-card">
-                        <h3>💳 Stripe Payments</h3>
-                        <p>Complete subscription management and billing system.</p>
-                        <ul class="feature-list">
-                            <li>3 pricing tiers (Free, Pro, Enterprise)</li>
-                            <li>Subscription management</li>
-                            <li>Usage tracking & analytics</li>
-                        </ul>
-                        <a href="/payments/pricing" class="btn" target="_blank">View Pricing</a>
-                    </div>
-                </div>
+            <div class="stat-card">
+                <div class="stat-number">20+</div>
+                <div class="stat-label">AI Services</div>
             </div>
-            
-            <!-- AI Services Section -->
-            <div class="test-section">
-                <h2><span class="status-indicator status-healthy"></span>AI Service Portfolio</h2>
-                <div class="test-grid">
-                    <div class="test-card">
-                        <h3>📄 Academic Papers (71 Credits)</h3>
-                        <p>Specialized AI services for research and academic writing.</p>
-                        <ul class="feature-list">
-                            <li>PaperPal (96% quality) - Academic writing</li>
-                            <li>Jenni AI (94% quality) - Research papers</li>
-                            <li>SciSpace (92% quality) - Literature review</li>
-                            <li>Consensus AI (95% quality) - Evidence synthesis</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="test-card">
-                        <h3>📊 Presentations (180 Credits)</h3>
-                        <p>Premium presentation and slide generation services.</p>
-                        <ul class="feature-list">
-                            <li>Genspark (95% quality) - Executive presentations</li>
-                            <li>Manus (93% quality) - Business presentations</li>
-                            <li>Gamma (91% quality) - Design presentations</li>
-                            <li>Tome (89% quality) - Storytelling</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="test-card">
-                        <h3>📈 Business Reports (47 Credits)</h3>
-                        <p>Market analysis and business intelligence services.</p>
-                        <ul class="feature-list">
-                            <li>PitchBook AI (96% quality) - Market analysis</li>
-                            <li>CB Insights (95% quality) - Industry intelligence</li>
-                            <li>Analyst AI (94% quality) - Business analysis</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="test-card">
-                        <h3>🔬 Research Reports (60 Credits)</h3>
-                        <p>Advanced research and data synthesis services.</p>
-                        <ul class="feature-list">
-                            <li>Perplexity Pro (94% quality) - Research synthesis</li>
-                            <li>You Research (91% quality) - Market research</li>
-                            <li>Tavily (89% quality) - Web research</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="test-card">
-                        <h3>📢 Marketing (85 Credits)</h3>
-                        <p>Marketing copy and campaign generation services.</p>
-                        <ul class="feature-list">
-                            <li>Persado (95% quality) - Emotional marketing</li>
-                            <li>Jasper AI (92% quality) - Marketing copy</li>
-                            <li>Copy.ai (89% quality) - Conversion copy</li>
-                        </ul>
-                    </div>
-                </div>
+            <div class="stat-card">
+                <div class="stat-number">5</div>
+                <div class="stat-label">Categories</div>
             </div>
-            
-            <!-- Deployment Configuration -->
-            <div class="test-section">
-                <h2><span class="status-indicator status-warning"></span>Beta Deployment Configuration</h2>
-                
-                <div class="config-section">
-                    <h4>🚀 Railway Deployment (Recommended)</h4>
-                    <p>One-click deployment with built-in Redis and automatic scaling.</p>
-                    <div class="env-var">REDIS_URL=${{Redis.REDIS_URL}}</div>
-                    <div class="env-var">PORT=$PORT</div>
-                    <div class="env-var">ADMIN_API_KEY=airdocs-beta-admin-2024</div>
-                    <a href="https://railway.app" class="btn btn-secondary" target="_blank">Deploy to Railway</a>
-                </div>
-                
-                <div class="config-section">
-                    <h4>💳 Stripe Test Configuration</h4>
-                    <p>Use Stripe test mode for beta payment testing.</p>
-                    <div class="env-var">STRIPE_SECRET_KEY=sk_test_...</div>
-                    <div class="env-var">STRIPE_WEBHOOK_SECRET=whsec_test_...</div>
-                    <div class="env-var">FRONTEND_URL=https://your-app.railway.app</div>
-                </div>
-                
-                <div class="config-section">
-                    <h4>🤖 AI Service API Keys</h4>
-                    <p>Add these for full functionality testing.</p>
-                    <div class="env-var">OPENAI_API_KEY=sk-... ($5 free credit)</div>
-                    <div class="env-var">ANTHROPIC_API_KEY=sk-ant-... ($5 free credit)</div>
-                    <div class="env-var">PERPLEXITY_API_KEY=pplx-... (Free tier available)</div>
-                </div>
-            </div>
-            
-            <!-- Beta Testing Checklist -->
-            <div class="test-section">
-                <h2><span class="status-indicator status-healthy"></span>Beta Testing Checklist</h2>
-                <div class="test-grid">
-                    <div class="test-card">
-                        <h3>✅ Phase 1: Core Deployment</h3>
-                        <ul class="feature-list">
-                            <li>Deploy to Railway/Render</li>
-                            <li>Add Redis database</li>
-                            <li>Test health endpoints</li>
-                            <li>Verify API documentation</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="test-card">
-                        <h3>✅ Phase 2: Payment Testing</h3>
-                        <ul class="feature-list">
-                            <li>Configure Stripe test mode</li>
-                            <li>Test subscription flows</li>
-                            <li>Verify webhook endpoints</li>
-                            <li>Test usage tracking</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="test-card">
-                        <h3>✅ Phase 3: AI Integration</h3>
-                        <ul class="feature-list">
-                            <li>Add OpenAI/Anthropic keys</li>
-                            <li>Test content generation</li>
-                            <li>Verify routing logic</li>
-                            <li>Test failover chains</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="test-card">
-                        <h3>✅ Phase 4: User Testing</h3>
-                        <ul class="feature-list">
-                            <li>Invite 10-20 beta users</li>
-                            <li>Monitor performance</li>
-                            <li>Collect feedback</li>
-                            <li>Iterate and improve</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Quick Actions -->
-            <div class="test-section">
-                <h2>🎯 Quick Actions</h2>
-                <div style="text-align: center; padding: 20px;">
-                    <a href="/docs" class="btn" target="_blank" style="margin: 10px;">📚 API Documentation</a>
-                    <a href="/health" class="btn" target="_blank" style="margin: 10px;">🏥 System Health</a>
-                    <a href="/payments/pricing" class="btn" target="_blank" style="margin: 10px;">💳 Pricing Plans</a>
-                    <a href="/ai-routing-stats" class="btn btn-secondary" target="_blank" style="margin: 10px;">🎯 AI Services</a>
-                </div>
+            <div class="stat-card">
+                <div class="stat-number">100%</div>
+                <div class="stat-label">Free Beta</div>
             </div>
         </div>
+        
+        <div class="links">
+            <a href="/docs" class="link-card" target="_blank">
+                <div class="link-icon">��</div>
+                <h3>API Documentation</h3>
+                <p>Interactive API Explorer</p>
+            </a>
+            <a href="/health" class="link-card" target="_blank">
+                <div class="link-icon">🏥</div>
+                <h3>System Health</h3>
+                <p>Monitor System Status</p>
+            </a>
+            <a href="/ai-routing-stats" class="link-card" target="_blank">
+                <div class="link-icon">🤖</div>
+                <h3>AI Services</h3>
+                <p>View Available Credits</p>
+            </a>
+            <a href="/admin/dashboard" class="link-card" target="_blank">
+                <div class="link-icon">👨‍💼</div>
+                <h3>Admin Dashboard</h3>
+                <p>System Management</p>
+            </a>
+        </div>
     </div>
-    
-    <script>
-        // Auto-refresh status indicators every 30 seconds
-        setInterval(async () => {
-            try {
-                const response = await fetch('/health');
-                const health = await response.json();
-                
-                // Update status indicators based on health
-                const indicators = document.querySelectorAll('.status-indicator');
-                indicators.forEach(indicator => {
-                    if (health.status === 'healthy') {
-                        indicator.className = 'status-indicator status-healthy';
-                    } else if (health.status === 'degraded') {
-                        indicator.className = 'status-indicator status-warning';
-                    } else {
-                        indicator.className = 'status-indicator status-error';
-                    }
-                });
-            } catch (error) {
-                console.log('Health check failed:', error);
-            }
-        }, 30000);
-    </script>
 </body>
 </html>

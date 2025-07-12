@@ -5,11 +5,11 @@ services:
   # Main AIRDOCS Backend Service
   - type: web
     name: airdocs-backend
-    env: python
+    runtime: python3
     region: oregon
     plan: free
-    buildCommand: cd backend && pip install -r requirements.txt
-    startCommand: cd backend && uvicorn app:app --host 0.0.0.0 --port $PORT
+    buildCommand: cd ai-aggregator/backend && pip install -r requirements.txt
+    startCommand: cd ai-aggregator/backend && uvicorn app:app --host 0.0.0.0 --port $PORT
     repo: https://github.com/satishskid/AIRdocs.git
     branch: main
     healthCheckPath: /health
@@ -17,18 +17,13 @@ services:
       - key: ENVIRONMENT
         value: production
       - key: DEBUG
-        value: false
+        value: "false"
       - key: API_HOST
         value: 0.0.0.0
       - key: ADMIN_API_KEY
-        generateValue: true
+        value: airdocs-render-admin-2024
       - key: TOKEN_ENCRYPTION_KEY
-        generateValue: true
-      - key: REDIS_URL
-        fromService:
-          type: redis
-          name: airdocs-redis
-          property: connectionString
+        value: airdocs-render-encryption-2024
 
   # Redis Cache Service
   - type: redis
@@ -36,11 +31,3 @@ services:
     region: oregon
     plan: free
     maxmemoryPolicy: allkeys-lru
-
-# Optional: PostgreSQL Database (if needed later)
-databases:
-  - name: airdocs-db
-    databaseName: airdocs
-    user: airdocs_user
-    region: oregon
-    plan: free
